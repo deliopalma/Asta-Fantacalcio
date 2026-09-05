@@ -17,26 +17,22 @@ st.set_page_config(
 # -----------------------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Sfondo Principale Blu Scuro Profondo */
     .stApp {
         background: radial-gradient(circle at 50% 0%, #172554 0%, #0f172a 50%, #020617 100%);
         color: #f8fafc;
     }
 
-    /* Sidebar Glassmorphism */
     section[data-testid="stSidebar"] {
         background-color: rgba(15, 23, 42, 0.85) !important;
         backdrop-filter: blur(12px);
         border-right: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    /* Titoli generali con alto contrasto */
     h1, h2, h3, h4, h5, h6, label, p {
         color: #f8fafc !important;
         text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
-    /* Banner Principale Brandizzato */
     .brand-banner {
         background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
         border: 1px solid rgba(59, 130, 246, 0.5);
@@ -80,7 +76,6 @@ st.markdown("""
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
     }
 
-    /* Metric Card Lucide */
     div[data-testid="stMetric"] {
         background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
         border: 1px solid rgba(59, 130, 246, 0.3);
@@ -100,7 +95,6 @@ st.markdown("""
         font-weight: 800 !important;
     }
 
-    /* Contenitore dei Badges */
     .badge-container {
         display: flex;
         gap: 10px;
@@ -129,7 +123,6 @@ st.markdown("""
     .badge-bomber { background: rgba(236, 72, 153, 0.25); border: 1px solid #f472b6; color: #fbcfe8; }
     .badge-off { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; }
 
-    /* Tab Evidenziate */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: rgba(15, 23, 42, 0.8);
@@ -156,17 +149,16 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CARICAMENTO DATI ED ELABORAZIONE BADGE DAL FILE EXCEL
+# CARICAMENTO DATI E CALCOLO PREZZI / BADGES
 # -----------------------------------------------------------------------------
 @st.cache_data
 def carica_e_calcola_modello():
     try:
         df = pd.read_excel('Tutti_2027.xlsx', sheet_name=0, engine='openpyxl')
         df.columns = [str(col).strip() for col in df.columns]
-
         cols_lower = {str(col).lower(): col for col in df.columns}
         
-        # Mappatura Nome Giocatore
+        # Mappatura Nome
         col_nome = next((cols_lower[k] for k in ['nome', 'giocatore', 'calciatore', 'player', 'cognome'] if k in cols_lower), None)
         df['nome_completo'] = df[col_nome].astype(str) if col_nome else df.iloc[:, 0].astype(str)
         df = df[df['nome_completo'].str.len() > 1].copy()
@@ -185,19 +177,14 @@ def carica_e_calcola_modello():
 
         df['Ruolo'] = df[col_ruolo].apply(normalizza_ruolo) if col_ruolo else 'A'
 
-        # Specialisti Palle Inattive da Excel
-        col_rig = next((cols_lower[k] for k in ['rigorista', 'rigori', 'rig', 'rigori tirati'] if k in cols_lower), None)
-        col_piaz = next((cols_lower[k] for k in ['punizioni', 'piazzati', 'angoli', 'cp', 'calci piazzati'] if k in cols_lower), None)
-        
-        df['Is_Rigorista'] = df[col_rig].astype(str).str.lower().str.contains('si|1|vero|true|prima|primo|titolare') if col_rig else False
-        df['Is_Piazzati'] = df[col_piaz].astype(str).str.lower().str.contains('si|1|vero|true|angoli|punizioni') if col_piaz else False
-
-        # Statistiche per Badge da Excel
+        # Lettura Colonne Statistiche Originali dal File Excel
         col_gol = next((cols_lower[k] for k in ['gol', 'goals', 'reti', 'g', 'gf', 'gol fatti'] if k in cols_lower), None)
         col_assist = next((cols_lower[k] for k in ['assist', 'a', 'ast', 'ass'] if k in cols_lower), None)
         col_pres = next((cols_lower[k] for k in ['presenze', 'partite', 'pg', 'p', 'pres'] if k in cols_lower), None)
         col_amm = next((cols_lower[k] for k in ['amm', 'ammonizioni', 'gialli', 'ammonizione', 'am'] if k in cols_lower), None)
         col_esp = next((cols_lower[k] for k in ['esp', 'espulsioni', 'rossi', 'espulsione', 'es'] if k in cols_lower), None)
+        col_rig = next((cols_lower[k] for k in ['rigorista', 'rigori', 'rig', 'rigori tirati'] if k in cols_lower), None)
+        col_piaz = next((cols_lower[k] for k in ['punizioni', 'piazzati', 'angoli', 'cp', 'calci piazzati'] if k in cols_lower), None)
 
         gol_val = pd.to_numeric(df[col_gol], errors='coerce').fillna(0) if col_gol else pd.Series(0, index=df.index)
         assist_val = pd.to_numeric(df[col_assist], errors='coerce').fillna(0) if col_assist else pd.Series(0, index=df.index)
@@ -205,36 +192,37 @@ def carica_e_calcola_modello():
         amm_val = pd.to_numeric(df[col_amm], errors='coerce').fillna(0) if col_amm else pd.Series(0, index=df.index)
         esp_val = pd.to_numeric(df[col_esp], errors='coerce').fillna(0) if col_esp else pd.Series(0, index=df.index)
 
-        # Calcolo dei Badge da Dati Excel
-        df['is_stakanovista'] = pres_val >= 28
+        # Inizializzazione Badge da Excel
+        df['Is_Rigorista'] = df[col_rig].astype(str).str.lower().str.contains('si|1|vero|true|prima|primo|titolare') if col_rig else False
+        df['Is_Piazzati'] = df[col_piaz].astype(str).str.lower().str.contains('si|1|vero|true|angoli|punizioni') if col_piaz else False
+
+        df['is_stakanovista'] = pres_val >= 25
         df['is_cittone'] = amm_val >= 6
         df['is_macellaio'] = esp_val >= 2
-        df['is_assistman'] = assist_val >= 5
+        df['is_assistman'] = assist_val >= 4
         
         ratio_gol = np.where(pres_val > 0, gol_val / pres_val, 0)
-        df['is_bomber'] = ratio_gol >= 0.27
+        df['is_bomber'] = (gol_val >= 6) | (ratio_gol >= 0.22)
 
-        # ---------------------------------------------------------------------
-        # REGOLE DI BACKUP SMART PER I TOP PLAYER SE I DATI MANCANO NEL FILE EXCEL
-        # ---------------------------------------------------------------------
-        rigoristi_top = ['calhanoglu', 'dybala', 'martinez l', 'lautaro', 'koopmeiners', 'retegui', 'vlahovic', 'orsolini', 'lukaku', 'gudmundsson', 'pulisic', 'berardi', 'pinamonti']
-        piazzati_top = ['calhanoglu', 'dybala', 'dimarco', 'pulisic', 'koopmeiners', 'pellegrini', 'gudmundsson', 'zaccagni', 'berardi', 'politano', 'mkhitaryan']
-        bomber_top = ['martinez l', 'lautaro', 'vlahovic', 'dybala', 'calhanoglu', 'thuram', 'retgui', 'lookman', 'gimenez', 'lukaku', 'zapata', 'pulisic', 'kean']
-        assist_top = ['dimarco', 'pulisic', 'dybala', 'leao', 'lookman', 'calhanoglu', 'mkhitaryan', 'koopmeiners', 'tchaouna', 'saelemaekers']
+        # Registro Espanso per Mappatura Dinamica Badge Specialisti / Top Player
+        rigoristi_list = ['calhanoglu', 'dybala', 'martinez l', 'lautaro', 'koopmeiners', 'retegui', 'vlahovic', 'orsolini', 'lukaku', 'gudmundsson', 'pulisic', 'berardi', 'pinamonti', 'davis']
+        piazzati_list = ['calhanoglu', 'dybala', 'dimarco', 'pulisic', 'koopmeiners', 'pellegrini', 'gudmundsson', 'zaccagni', 'berardi', 'politano', 'mkhitaryan', 'davis']
+        bomber_list = ['martinez l', 'lautaro', 'vlahovic', 'dybala', 'calhanoglu', 'thuram', 'retegui', 'lookman', 'gimenez', 'lukaku', 'zapata', 'pulisic', 'kean', 'davis', 'lucca']
+        assist_list = ['dimarco', 'pulisic', 'dybala', 'leao', 'lookman', 'calhanoglu', 'mkhitaryan', 'koopmeiners', 'tchaouna', 'saelemaekers']
 
         for idx, row in df.iterrows():
             nome_clean = str(row['nome_completo']).lower()
 
-            if any(k in nome_clean for k in rigoristi_top):
+            if any(k in nome_clean for k in rigoristi_list):
                 df.at[idx, 'Is_Rigorista'] = True
-            if any(k in nome_clean for k in piazzati_top):
+            if any(k in nome_clean for k in piazzati_list):
                 df.at[idx, 'Is_Piazzati'] = True
-            if any(k in nome_clean for k in bomber_top):
+            if any(k in nome_clean for k in bomber_list):
                 df.at[idx, 'is_bomber'] = True
-            if any(k in nome_clean for k in assist_top):
+            if any(k in nome_clean for k in assist_list):
                 df.at[idx, 'is_assistman'] = True
 
-        # Generazione stringa sintetica badge per la vista a tabelle
+        # Generazione stringa sintetica badge
         def genera_str_badge(row):
             b = []
             if row['Is_Rigorista']: b.append("🎯 Rigorista")
@@ -246,18 +234,17 @@ def carica_e_calcola_modello():
             if row['is_bomber']: b.append("💣 Bomber")
             return " | ".join(b) if b else "-"
 
-        # FantaScore con pesi e bonus
-        bonus_rigore = np.where(df['Is_Rigorista'], 15, 0)
-        bonus_piazzati = np.where(df['Is_Piazzati'], 8, 0)
-        df['fanta_score'] = (gol_val * 4.0) + (assist_val * 1.5) + (pres_val * 0.3) + bonus_rigore + bonus_piazzati
+        # Ripristino FantaScore Originale Pesa-Valore per Modello Prezzi Stabile
+        df['fanta_score'] = (gol_val * 3.5) + (assist_val * 1.2) + (pres_val * 0.2) + np.where(df['Is_Rigorista'], 5, 0) + np.where(df['Is_Piazzati'], 3, 0)
 
+        # Se le colonne statistiche nel file Excel erano vuote, usiamo il ranking relativo mantenendo la scala originale
         if df['fanta_score'].max() == 0 or df['fanta_score'].nunique() <= 1:
-            df['fanta_score'] = np.linspace(100, 5, len(df))
+            df['fanta_score'] = np.linspace(100, 1, len(df))
 
-        # Pricing Calibrato (12.000 Crediti Totali)
+        # Algoritmo Pricing Bilanciato
         budgets = {'P': 960, 'D': 2040, 'C': 4200, 'A': 4800}
         slots_count = {'P': 36, 'D': 96, 'C': 96, 'A': 72}
-        gamma_power = {'A': 3.8, 'C': 3.2, 'D': 2.5, 'P': 2.2}
+        gamma_power = {'A': 3.5, 'C': 2.8, 'D': 2.2, 'P': 1.8}
 
         elenco_finali = []
         for r in ['P', 'D', 'C', 'A']:
@@ -311,12 +298,12 @@ df = carica_e_calcola_modello()
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/soccer-ball.png", width=65)
     st.title("FantaBooster®")
-    st.caption("Engine Version 3.2 Badges Fixed")
+    st.caption("Engine Version 3.3 Pricing & Badges Restored")
     st.markdown("---")
     st.markdown("**⚙️ Assetto Lega:**")
     st.write("👥 **Partecipanti:** 12 Squadre")
     st.write("💰 **Budget Singolo:** 1.000 Crediti")
-    st.write("📈 **Curva Asta:** Gamma Power 3.8")
+    st.write("📈 **Curva Asta:** Gamma Power 3.5")
     st.markdown("---")
     st.markdown("✍️ **Created by Delio Palma**")
 
@@ -351,7 +338,6 @@ if not df.empty and 'nome_completo' in df.columns:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("##### 🏆 Status & Badge Speciali Attribuiti")
 
-        # Generazione Badge Grafici Lucidi
         badges_html = []
         if p.get('Is_Rigorista', False):
             badges_html.append('<div class="badge-chip badge-rigorista">🎯 RIGORISTA TITOLARE</div>')
