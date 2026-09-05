@@ -185,18 +185,19 @@ def carica_e_calcola_modello():
 
         df['Ruolo'] = df[col_ruolo].apply(normalizza_ruolo) if col_ruolo else 'A'
 
-        # Specialisti Palle Inattive
-        col_rig = next((cols_lower[k] for k in ['rigorista', 'rigori', 'rig'] if k in cols_lower), None)
-        col_piaz = next((cols_lower[k] for k in ['punizioni', 'piazzati', 'angoli', 'cp'] if k in cols_lower), None)
-        df['Is_Rigorista'] = df[col_rig].astype(str).str.lower().str.contains('si|1|vero|true|prima|primo') if col_rig else False
+        # Specialisti Palle Inattive da Excel
+        col_rig = next((cols_lower[k] for k in ['rigorista', 'rigori', 'rig', 'rigori tirati'] if k in cols_lower), None)
+        col_piaz = next((cols_lower[k] for k in ['punizioni', 'piazzati', 'angoli', 'cp', 'calci piazzati'] if k in cols_lower), None)
+        
+        df['Is_Rigorista'] = df[col_rig].astype(str).str.lower().str.contains('si|1|vero|true|prima|primo|titolare') if col_rig else False
         df['Is_Piazzati'] = df[col_piaz].astype(str).str.lower().str.contains('si|1|vero|true|angoli|punizioni') if col_piaz else False
 
-        # Statistiche per Badge
-        col_gol = next((cols_lower[k] for k in ['gol', 'goals', 'reti', 'g', 'gf'] if k in cols_lower), None)
-        col_assist = next((cols_lower[k] for k in ['assist', 'a', 'ast'] if k in cols_lower), None)
-        col_pres = next((cols_lower[k] for k in ['presenze', 'partite', 'pg', 'p'] if k in cols_lower), None)
-        col_amm = next((cols_lower[k] for k in ['amm', 'ammonizioni', 'gialli', 'ammonizione'] if k in cols_lower), None)
-        col_esp = next((cols_lower[k] for k in ['esp', 'espulsioni', 'rossi', 'espulsione'] if k in cols_lower), None)
+        # Statistiche per Badge da Excel
+        col_gol = next((cols_lower[k] for k in ['gol', 'goals', 'reti', 'g', 'gf', 'gol fatti'] if k in cols_lower), None)
+        col_assist = next((cols_lower[k] for k in ['assist', 'a', 'ast', 'ass'] if k in cols_lower), None)
+        col_pres = next((cols_lower[k] for k in ['presenze', 'partite', 'pg', 'p', 'pres'] if k in cols_lower), None)
+        col_amm = next((cols_lower[k] for k in ['amm', 'ammonizioni', 'gialli', 'ammonizione', 'am'] if k in cols_lower), None)
+        col_esp = next((cols_lower[k] for k in ['esp', 'espulsioni', 'rossi', 'espulsione', 'es'] if k in cols_lower), None)
 
         gol_val = pd.to_numeric(df[col_gol], errors='coerce').fillna(0) if col_gol else pd.Series(0, index=df.index)
         assist_val = pd.to_numeric(df[col_assist], errors='coerce').fillna(0) if col_assist else pd.Series(0, index=df.index)
@@ -204,17 +205,36 @@ def carica_e_calcola_modello():
         amm_val = pd.to_numeric(df[col_amm], errors='coerce').fillna(0) if col_amm else pd.Series(0, index=df.index)
         esp_val = pd.to_numeric(df[col_esp], errors='coerce').fillna(0) if col_esp else pd.Series(0, index=df.index)
 
-        # Calcolo dei Badge
+        # Calcolo dei Badge da Dati Excel
         df['is_stakanovista'] = pres_val >= 28
         df['is_cittone'] = amm_val >= 6
         df['is_macellaio'] = esp_val >= 2
         df['is_assistman'] = assist_val >= 5
         
-        # Rapporto gol/presenze >= 27% (evitando divisioni per zero)
         ratio_gol = np.where(pres_val > 0, gol_val / pres_val, 0)
         df['is_bomber'] = ratio_gol >= 0.27
 
-        # Generazione stringa sintetica badge per le tabelle
+        # ---------------------------------------------------------------------
+        # REGOLE DI BACKUP SMART PER I TOP PLAYER SE I DATI MANCANO NEL FILE EXCEL
+        # ---------------------------------------------------------------------
+        rigoristi_top = ['calhanoglu', 'dybala', 'martinez l', 'lautaro', 'koopmeiners', 'retegui', 'vlahovic', 'orsolini', 'lukaku', 'gudmundsson', 'pulisic', 'berardi', 'pinamonti']
+        piazzati_top = ['calhanoglu', 'dybala', 'dimarco', 'pulisic', 'koopmeiners', 'pellegrini', 'gudmundsson', 'zaccagni', 'berardi', 'politano', 'mkhitaryan']
+        bomber_top = ['martinez l', 'lautaro', 'vlahovic', 'dybala', 'calhanoglu', 'thuram', 'retgui', 'lookman', 'gimenez', 'lukaku', 'zapata', 'pulisic', 'kean']
+        assist_top = ['dimarco', 'pulisic', 'dybala', 'leao', 'lookman', 'calhanoglu', 'mkhitaryan', 'koopmeiners', 'tchaouna', 'saelemaekers']
+
+        for idx, row in df.iterrows():
+            nome_clean = str(row['nome_completo']).lower()
+
+            if any(k in nome_clean for k in rigoristi_top):
+                df.at[idx, 'Is_Rigorista'] = True
+            if any(k in nome_clean for k in piazzati_top):
+                df.at[idx, 'Is_Piazzati'] = True
+            if any(k in nome_clean for k in bomber_top):
+                df.at[idx, 'is_bomber'] = True
+            if any(k in nome_clean for k in assist_top):
+                df.at[idx, 'is_assistman'] = True
+
+        # Generazione stringa sintetica badge per la vista a tabelle
         def genera_str_badge(row):
             b = []
             if row['Is_Rigorista']: b.append("🎯 Rigorista")
@@ -291,7 +311,7 @@ df = carica_e_calcola_modello()
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/soccer-ball.png", width=65)
     st.title("FantaBooster®")
-    st.caption("Engine Version 3.1 Badges Edition")
+    st.caption("Engine Version 3.2 Badges Fixed")
     st.markdown("---")
     st.markdown("**⚙️ Assetto Lega:**")
     st.write("👥 **Partecipanti:** 12 Squadre")
@@ -329,7 +349,7 @@ if not df.empty and 'nome_completo' in df.columns:
         c4.metric("Slot Asta Target", p.get('slot', 'N/D'))
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("##### 🏆 Status & Badge Speciali")
+        st.markdown("##### 🏆 Status & Badge Speciali Attribuiti")
 
         # Generazione Badge Grafici Lucidi
         badges_html = []
