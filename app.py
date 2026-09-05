@@ -117,6 +117,8 @@ st.markdown("""
     .badge-stakanovista { background: rgba(234, 179, 8, 0.25); border: 1px solid #facc15; color: #fef08a; }
     .badge-cittone { background: rgba(245, 158, 11, 0.25); border: 1px solid #fbbf24; color: #fde68a; }
     .badge-macellaio { background: rgba(239, 68, 68, 0.25); border: 1px solid #f87171; color: #fca5a5; }
+    .badge-bomber { background: rgba(34, 197, 94, 0.25); border: 1px solid #4ade80; color: #bbf7d0; }
+    .badge-rigorista { background: rgba(168, 85, 247, 0.25); border: 1px solid #c084fc; color: #f3e8ff; }
     .badge-off { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; }
 
     .stTabs [data-baseweb="tab-list"] {
@@ -173,23 +175,34 @@ def carica_e_calcola_modello():
 
         df['Ruolo'] = df[col_ruolo].apply(normalizza_ruolo) if col_ruolo else 'A'
 
-        # STATISTICHE MISURABILI OGGETTIVE PER BADGES
+        # STATISTICHE 2025/2026 (SERIE A + SERIE B) PER BADGES
         col_pres = next((cols_lower[k] for k in ['presenze', 'partite', 'pg', 'p', 'pres'] if k in cols_lower), None)
         col_amm = next((cols_lower[k] for k in ['amm', 'ammonizioni', 'gialli', 'ammonizione', 'am'] if k in cols_lower), None)
         col_esp = next((cols_lower[k] for k in ['esp', 'espulsioni', 'rossi', 'espulsione', 'es'] if k in cols_lower), None)
+        col_gol = next((cols_lower[k] for k in ['gol', 'goals', 'reti', 'g'] if k in cols_lower), None)
+        col_assist = next((cols_lower[k] for k in ['assist', 'ast', 'a'] if k in cols_lower), None)
+        col_rig = next((cols_lower[k] for k in ['rigori_segnati', 'rigori', 'rig', 'rigori_gol'] if k in cols_lower), None)
 
-        pres_val = pd.to_numeric(df[col_pres], errors='coerce').fillna(0) if col_pres else pd.Series(0, index=df.index)
-        amm_val = pd.to_numeric(df[col_amm], errors='coerce').fillna(0) if col_amm else pd.Series(0, index=df.index)
-        esp_val = pd.to_numeric(df[col_esp], errors='coerce').fillna(0) if col_esp else pd.Series(0, index=df.index)
+        df['presenze_2526'] = pd.to_numeric(df[col_pres], errors='coerce').fillna(0) if col_pres else 0
+        df['gialli_2526'] = pd.to_numeric(df[col_amm], errors='coerce').fillna(0) if col_amm else 0
+        df['rossi_2526'] = pd.to_numeric(df[col_esp], errors='coerce').fillna(0) if col_esp else 0
+        df['gol_2526'] = pd.to_numeric(df[col_gol], errors='coerce').fillna(0) if col_gol else 0
+        df['assist_2526'] = pd.to_numeric(df[col_assist], errors='coerce').fillna(0) if col_assist else 0
+        df['rigori_2526'] = pd.to_numeric(df[col_rig], errors='coerce').fillna(0) if col_rig else 0
 
-        df['is_stakanovista'] = pres_val >= 25
-        df['is_cittone'] = amm_val >= 6
-        df['is_macellaio'] = esp_val >= 2
+        # ASSEGNAZIONE BADGES
+        df['is_stakanovista'] = df['presenze_2526'] >= 25
+        df['is_cittone'] = df['gialli_2526'] >= 6
+        df['is_macellaio'] = df['rossi_2526'] >= 2
+        df['is_bomber'] = df['gol_2526'] >= 10
+        df['is_rigorista'] = df['rigori_2526'] >= 3
 
-        # Generazione stringa sintetica per i badge
+        # Stringa sintetica per i badge
         def genera_str_badge(row):
             b = []
             if row['is_stakanovista']: b.append("🏋️‍♂️ Stakanovista")
+            if row['is_bomber']: b.append("⚽ Bomber")
+            if row['is_rigorista']: b.append("🎯 Rigorista")
             if row['is_cittone']: b.append("🟨 Cittone")
             if row['is_macellaio']: b.append("🟥 Macellaio")
             return " | ".join(b) if b else "-"
@@ -259,7 +272,7 @@ df = carica_e_calcola_modello()
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/soccer-ball.png", width=65)
     st.title("FantaBooster®")
-    st.caption("Engine Version 3.4 Baseline Prices Restored")
+    st.caption("Engine Version 3.5 — Transfermarkt Stats 25/26 Integrated")
     st.markdown("---")
     st.markdown("**⚙️ Assetto Lega:**")
     st.write("👥 **Partecipanti:** 12 Squadre")
@@ -297,11 +310,26 @@ if not df.empty and 'nome_completo' in df.columns:
         c4.metric("Slot Asta Target", p.get('slot', 'N/D'))
 
         st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("##### 📊 Statistiche Stagione 2025/2026 (Transfermarkt)")
+        
+        s1, s2, s3, s4, s5, s6 = st.columns(6)
+        s1.metric("Presenze", int(p.get('presenze_2526', 0)))
+        s2.metric("Gol", int(p.get('gol_2526', 0)))
+        s3.metric("Assist", int(p.get('assist_2526', 0)))
+        s4.metric("Rigori Segnati", int(p.get('rigori_2526', 0)))
+        s5.metric("Ammonizioni", int(p.get('gialli_2526', 0)))
+        s6.metric("Espulsioni", int(p.get('rossi_2526', 0)))
+
+        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("##### 🏆 Badges Statistici Misurabili")
 
         badges_html = []
         if p.get('is_stakanovista', False):
             badges_html.append('<div class="badge-chip badge-stakanovista">🏋️‍♂️ STAKANOVISTA (≥25 Presenze)</div>')
+        if p.get('is_bomber', False):
+            badges_html.append('<div class="badge-chip badge-bomber">⚽ BOMBER (≥10 Gol)</div>')
+        if p.get('is_rigorista', False):
+            badges_html.append('<div class="badge-chip badge-rigorista">🎯 RIGORISTA (≥3 Rigori Segnati)</div>')
         if p.get('is_cittone', False):
             badges_html.append('<div class="badge-chip badge-cittone">🟨 CITTONE (≥6 Gialli)</div>')
         if p.get('is_macellaio', False):
@@ -325,7 +353,7 @@ if not df.empty and 'nome_completo' in df.columns:
         offerta = st.number_input("Offerta attuale chiamata al tavolo (crediti):", min_value=1, value=int(pl.get('prezzo_consigliato', 1)))
 
         if offerta <= pl.get('prezzo_consigliato', 1):
-            st.success("🟢 **COMPRALO ORA!** Offerta eccellente, al sotto o pari alla stima ideale.")
+            st.success("🟢 **COMPRALO ORA!** Offerta eccellente, al di sotto o pari alla stima ideale.")
         elif offerta <= pl.get('prezzo_massimo', 1):
             st.warning("🟡 **VALUTA IL RILANCIO.** Entro la soglia limite di tolleranza.")
         else:
@@ -336,7 +364,7 @@ if not df.empty and 'nome_completo' in df.columns:
         r = st.radio("Filtra per Ruolo:", ['A', 'C', 'D', 'P'], horizontal=True)
         top = df[df['Ruolo'] == r].sort_values('prezzo_consigliato', ascending=False)
         st.dataframe(
-            top[['nome_completo', 'Squadra', 'slot', 'prezzo_consigliato', 'prezzo_massimo', 'badge_summary']], 
+            top[['nome_completo', 'Squadra', 'slot', 'prezzo_consigliato', 'prezzo_massimo', 'presenze_2526', 'gol_2526', 'assist_2526', 'badge_summary']], 
             use_container_width=True,
             height=480
         )
