@@ -8,7 +8,7 @@ st.set_page_config(page_title="FantaAsta Stats Engine 2026/2027", page_icon="⚽
 def carica_e_calcola_modello():
     try:
         # Legge il file Excel
-        df = pd.read_excel('data/Tutti_2027.xlsx', sheet_name=0)
+        df = pd.read_excel('Tutti_2027.xlsx', sheet_name=0, engine='openpyxl')
         df.columns = [str(col).strip() for col in df.columns]
 
         cols_lower = {str(col).lower(): col for col in df.columns}
