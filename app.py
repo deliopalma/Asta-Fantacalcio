@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN SYSTEM: BLU SCURO DEEP + HIGH CONTRAST + GLASSMORPHISM
+# DESIGN SYSTEM: BLU SCURO DEEP + HIGH CONTRAST + BADGES
 # -----------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -46,17 +46,6 @@ st.markdown("""
         box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         position: relative;
         overflow: hidden;
-    }
-    
-    .brand-banner::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 180px;
-        height: 180px;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, transparent 70%);
-        pointer-events: none;
     }
 
     .brand-title {
@@ -91,7 +80,7 @@ st.markdown("""
         box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
     }
 
-    /* Riquadri Metric Card Lucidi ad Alto Contrasto */
+    /* Metric Card Lucide */
     div[data-testid="stMetric"] {
         background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
         border: 1px solid rgba(59, 130, 246, 0.3);
@@ -99,102 +88,62 @@ st.markdown("""
         border-radius: 16px;
         padding: 18px 20px;
         box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     div[data-testid="stMetric"] label {
         color: #94a3b8 !important;
         font-weight: 600 !important;
-        font-size: 0.9rem !important;
     }
 
     div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
         color: #ffffff !important;
         font-weight: 800 !important;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
-    div[data-testid="stMetric"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 32px -8px rgba(37, 99, 235, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-    }
-
-    /* Badges Specialisti Lucidi e Leggibili */
+    /* Contenitore dei Badges */
     .badge-container {
         display: flex;
-        gap: 12px;
+        gap: 10px;
         margin-top: 10px;
         flex-wrap: wrap;
     }
 
-    .badge-glow-green {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 100%);
-        border: 1px solid rgba(52, 211, 153, 0.6);
-        border-top: 1px solid rgba(110, 231, 183, 0.8);
-        color: #a7f3d0;
-        padding: 8px 16px;
+    .badge-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
         border-radius: 12px;
         font-weight: 700;
-        font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        font-size: 0.88rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    .badge-glow-blue {
-        background: linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(2, 132, 199, 0.2) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.6);
-        border-top: 1px solid rgba(125, 211, 252, 0.8);
-        color: #bae6fd;
-        padding: 8px 16px;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
-    }
+    .badge-rigorista { background: rgba(16, 185, 129, 0.25); border: 1px solid #34d399; color: #a7f3d0; }
+    .badge-piazzati { background: rgba(14, 165, 233, 0.25); border: 1px solid #38bdf8; color: #bae6fd; }
+    .badge-stakanovista { background: rgba(234, 179, 8, 0.25); border: 1px solid #facc15; color: #fef08a; }
+    .badge-cittone { background: rgba(245, 158, 11, 0.25); border: 1px solid #fbbf24; color: #fde68a; }
+    .badge-macellaio { background: rgba(239, 68, 68, 0.25); border: 1px solid #f87171; color: #fca5a5; }
+    .badge-assist { background: rgba(168, 85, 247, 0.25); border: 1px solid #c084fc; color: #e9d5ff; }
+    .badge-bomber { background: rgba(236, 72, 153, 0.25); border: 1px solid #f472b6; color: #fbcfe8; }
+    .badge-off { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); color: #94a3b8; }
 
-    .badge-glow-off {
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #94a3b8;
-        padding: 8px 16px;
-        border-radius: 12px;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    /* Tab Personalizzate ed Evidenziate */
+    /* Tab Evidenziate */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: rgba(15, 23, 42, 0.8);
         padding: 8px;
         border-radius: 14px;
         border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .stTabs [data-baseweb="tab"] {
-        border-radius: 10px;
-        color: #cbd5e1 !important;
-        font-weight: 700 !important;
-        padding: 10px 24px !important;
-        border: 1px solid transparent;
-        transition: all 0.2s ease;
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
         color: #ffffff !important;
         border: 1px solid rgba(147, 197, 253, 0.5) !important;
-        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.5);
     }
 
-    /* Personalizzazione Selectbox e Input */
-    .stSelectbox label, .stNumberInput label {
-        font-size: 1rem !important;
-        font-weight: 700 !important;
-        color: #f1f5f9 !important;
-    }
-
-    /* Footer Elegante */
     .footer-delio {
         text-align: center;
         padding: 24px;
@@ -203,14 +152,11 @@ st.markdown("""
         color: #94a3b8;
         font-size: 0.88rem;
     }
-    .footer-delio strong {
-        color: #93c5fd;
-    }
     </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CARICAMENTO DATI E CALCOLO MATEMATICO
+# CARICAMENTO DATI ED ELABORAZIONE BADGE DAL FILE EXCEL
 # -----------------------------------------------------------------------------
 @st.cache_data
 def carica_e_calcola_modello():
@@ -219,20 +165,15 @@ def carica_e_calcola_modello():
         df.columns = [str(col).strip() for col in df.columns]
 
         cols_lower = {str(col).lower(): col for col in df.columns}
+        
+        # Mappatura Nome Giocatore
         col_nome = next((cols_lower[k] for k in ['nome', 'giocatore', 'calciatore', 'player', 'cognome'] if k in cols_lower), None)
-
-        if col_nome:
-            df['nome_completo'] = df[col_nome].astype(str)
-        else:
-            text_cols = [c for c in df.columns if df[c].dtype == 'object']
-            df['nome_completo'] = df[text_cols[0]].astype(str) if text_cols else df.iloc[:, 0].astype(str)
-
+        df['nome_completo'] = df[col_nome].astype(str) if col_nome else df.iloc[:, 0].astype(str)
         df = df[df['nome_completo'].str.len() > 1].copy()
 
         # Squadra e Ruolo
         col_sq = next((cols_lower[k] for k in ['squadra', 'team', 'sq'] if k in cols_lower), None)
         col_ruolo = next((cols_lower[k] for k in ['ruolo', 'role', 'r'] if k in cols_lower), None)
-
         df['Squadra'] = df[col_sq].astype(str) if col_sq else 'N/D'
         
         def normalizza_ruolo(r):
@@ -244,32 +185,56 @@ def carica_e_calcola_modello():
 
         df['Ruolo'] = df[col_ruolo].apply(normalizza_ruolo) if col_ruolo else 'A'
 
-        # Ricerca Specialisti
+        # Specialisti Palle Inattive
         col_rig = next((cols_lower[k] for k in ['rigorista', 'rigori', 'rig'] if k in cols_lower), None)
         col_piaz = next((cols_lower[k] for k in ['punizioni', 'piazzati', 'angoli', 'cp'] if k in cols_lower), None)
-
         df['Is_Rigorista'] = df[col_rig].astype(str).str.lower().str.contains('si|1|vero|true|prima|primo') if col_rig else False
         df['Is_Piazzati'] = df[col_piaz].astype(str).str.lower().str.contains('si|1|vero|true|angoli|punizioni') if col_piaz else False
 
-        # Statistiche
+        # Statistiche per Badge
         col_gol = next((cols_lower[k] for k in ['gol', 'goals', 'reti', 'g', 'gf'] if k in cols_lower), None)
         col_assist = next((cols_lower[k] for k in ['assist', 'a', 'ast'] if k in cols_lower), None)
         col_pres = next((cols_lower[k] for k in ['presenze', 'partite', 'pg', 'p'] if k in cols_lower), None)
+        col_amm = next((cols_lower[k] for k in ['amm', 'ammonizioni', 'gialli', 'ammonizione'] if k in cols_lower), None)
+        col_esp = next((cols_lower[k] for k in ['esp', 'espulsioni', 'rossi', 'espulsione'] if k in cols_lower), None)
 
         gol_val = pd.to_numeric(df[col_gol], errors='coerce').fillna(0) if col_gol else pd.Series(0, index=df.index)
         assist_val = pd.to_numeric(df[col_assist], errors='coerce').fillna(0) if col_assist else pd.Series(0, index=df.index)
-        pres_val = pd.to_numeric(df[col_pres], errors='coerce').fillna(20) if col_pres else pd.Series(20, index=df.index)
+        pres_val = pd.to_numeric(df[col_pres], errors='coerce').fillna(0) if col_pres else pd.Series(0, index=df.index)
+        amm_val = pd.to_numeric(df[col_amm], errors='coerce').fillna(0) if col_amm else pd.Series(0, index=df.index)
+        esp_val = pd.to_numeric(df[col_esp], errors='coerce').fillna(0) if col_esp else pd.Series(0, index=df.index)
+
+        # Calcolo dei Badge
+        df['is_stakanovista'] = pres_val >= 28
+        df['is_cittone'] = amm_val >= 6
+        df['is_macellaio'] = esp_val >= 2
+        df['is_assistman'] = assist_val >= 5
+        
+        # Rapporto gol/presenze >= 27% (evitando divisioni per zero)
+        ratio_gol = np.where(pres_val > 0, gol_val / pres_val, 0)
+        df['is_bomber'] = ratio_gol >= 0.27
+
+        # Generazione stringa sintetica badge per le tabelle
+        def genera_str_badge(row):
+            b = []
+            if row['Is_Rigorista']: b.append("🎯 Rigorista")
+            if row['Is_Piazzati']: b.append("📐 Piazzati")
+            if row['is_stakanovista']: b.append("🏋️‍♂️ Stakanovista")
+            if row['is_cittone']: b.append("🟨 Cittone")
+            if row['is_macellaio']: b.append("🟥 Macellaio")
+            if row['is_assistman']: b.append("⚽⭐ Assist-man")
+            if row['is_bomber']: b.append("💣 Bomber")
+            return " | ".join(b) if b else "-"
 
         # FantaScore con pesi e bonus
         bonus_rigore = np.where(df['Is_Rigorista'], 15, 0)
         bonus_piazzati = np.where(df['Is_Piazzati'], 8, 0)
-
         df['fanta_score'] = (gol_val * 4.0) + (assist_val * 1.5) + (pres_val * 0.3) + bonus_rigore + bonus_piazzati
 
         if df['fanta_score'].max() == 0 or df['fanta_score'].nunique() <= 1:
             df['fanta_score'] = np.linspace(100, 5, len(df))
 
-        # Modello Pricing Calibrato (12.000 Crediti Totali)
+        # Pricing Calibrato (12.000 Crediti Totali)
         budgets = {'P': 960, 'D': 2040, 'C': 4200, 'A': 4800}
         slots_count = {'P': 36, 'D': 96, 'C': 96, 'A': 72}
         gamma_power = {'A': 3.8, 'C': 3.2, 'D': 2.5, 'P': 2.2}
@@ -299,9 +264,9 @@ def carica_e_calcola_modello():
             for idx in range(total):
                 if idx < max(1, int(total * 0.08)): s_val = "Slot 1 (Super Top)"
                 elif idx < max(2, int(total * 0.20)): s_val = "Slot 2 (Top Player)"
-                elif idx < max(4, int(total * 0.40)): s_val = "Slot 3-4 (Semimolare / Titolare Forte)"
-                elif idx < max(6, int(total * 0.70)): s_val = "Slot 5-6 (Titolare / Buona Copertura)"
-                else: s_val = "Slot 7-8 (Low Cost / Scommessa)"
+                elif idx < max(4, int(total * 0.40)): s_val = "Slot 3-4 (Semimolare)"
+                elif idx < max(6, int(total * 0.70)): s_val = "Slot 5-6 (Titolare)"
+                else: s_val = "Slot 7-8 (Low Cost)"
                 top_n.at[idx, 'slot'] = s_val
 
             elenco_finali.append(top_n)
@@ -309,6 +274,7 @@ def carica_e_calcola_modello():
         if elenco_finali:
             df_finale = pd.concat(elenco_finali, ignore_index=True)
             df_finale['prezzo_massimo'] = np.round(df_finale['prezzo_consigliato'] * 1.25).astype(int)
+            df_finale['badge_summary'] = df_finale.apply(genera_str_badge, axis=1)
             return df_finale
         else:
             return df
@@ -320,12 +286,12 @@ def carica_e_calcola_modello():
 df = carica_e_calcola_modello()
 
 # -----------------------------------------------------------------------------
-# SIDEBAR FIRMATA
+# SIDEBAR
 # -----------------------------------------------------------------------------
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/soccer-ball.png", width=65)
     st.title("FantaBooster®")
-    st.caption("Engine Version 3.0 Deep Blue")
+    st.caption("Engine Version 3.1 Badges Edition")
     st.markdown("---")
     st.markdown("**⚙️ Assetto Lega:**")
     st.write("👥 **Partecipanti:** 12 Squadre")
@@ -335,27 +301,27 @@ with st.sidebar:
     st.markdown("✍️ **Created by Delio Palma**")
 
 # -----------------------------------------------------------------------------
-# HEADER BRANDIZZATO "FANTABOOSTER® BY DELIO"
+# HEADER BRANDIZZATO
 # -----------------------------------------------------------------------------
 st.markdown("""
     <div class="brand-banner">
         <div class="brand-title">⚡ FantaBooster® 2026/2027</div>
-        <div class="brand-subtitle">Algoritmo Predittivo d'Asta per Leghe a 12 Squadre</div>
+        <div class="brand-subtitle">Algoritmo Predittivo d'Asta con Badge & Specialisti</div>
         <div class="signature-tag">🛡️ Official Signature Edition by Delio Palma</div>
     </div>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# SEZIONI E INTERFACCIA UTENTE
+# SCHEDE E INTERFACCIA UTENTE
 # -----------------------------------------------------------------------------
 if not df.empty and 'nome_completo' in df.columns:
-    tab1, tab2, tab3 = st.tabs(["🔍 Analisi Giocatore", "⚡ Assistente Asta Live", "📊 Listino Prezzi & Ranking"])
+    tab1, tab2, tab3 = st.tabs(["🔍 Analisi Giocatore", "⚡ Assistente Asta Live", "📊 Listino Prezzi & Badges"])
 
     with tab1:
         giocatore = st.selectbox("Cerca o Seleziona Giocatore:", sorted(df['nome_completo'].unique()))
         p = df[df['nome_completo'] == giocatore].iloc[0]
 
-        # Metric Cards Ombreggiate e Lucide
+        # Metric Cards
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Squadra e Ruolo", f"{p.get('Squadra', 'N/D')} — ({p.get('Ruolo', 'N/D')})")
         c2.metric("Prezzo Consigliato", f"{p.get('prezzo_consigliato', 1)} cr")
@@ -363,38 +329,55 @@ if not df.empty and 'nome_completo' in df.columns:
         c4.metric("Slot Asta Target", p.get('slot', 'N/D'))
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("##### 🎯 Specialità & Calci Piazzati")
-        
-        rig_html = '<div class="badge-glow-green">🎯 RIGORISTA TITOLARE</div>' if p.get('Is_Rigorista', False) else '<div class="badge-glow-off">⚪ Non Rigorista</div>'
-        piaz_html = '<div class="badge-glow-blue">📐 BATTITORE PUNIZIONI / ANGOLI</div>' if p.get('Is_Piazzati', False) else '<div class="badge-glow-off">⚪ Non Piazzati</div>'
-        
-        st.markdown(f'<div class="badge-container">{rig_html}{piaz_html}</div>', unsafe_allow_html=True)
+        st.markdown("##### 🏆 Status & Badge Speciali")
+
+        # Generazione Badge Grafici Lucidi
+        badges_html = []
+        if p.get('Is_Rigorista', False):
+            badges_html.append('<div class="badge-chip badge-rigorista">🎯 RIGORISTA TITOLARE</div>')
+        if p.get('Is_Piazzati', False):
+            badges_html.append('<div class="badge-chip badge-piazzati">📐 CALCI PIAZZATI / ANGOLI</div>')
+        if p.get('is_stakanovista', False):
+            badges_html.append('<div class="badge-chip badge-stakanovista">🏋️‍♂️ STAKANOVISTA</div>')
+        if p.get('is_cittone', False):
+            badges_html.append('<div class="badge-chip badge-cittone">🟨 CITTONE</div>')
+        if p.get('is_macellaio', False):
+            badges_html.append('<div class="badge-chip badge-macellaio">🟥 MACELLAIO</div>')
+        if p.get('is_assistman', False):
+            badges_html.append('<div class="badge-chip badge-assist">⚽⭐ ASSIST-MAN</div>')
+        if p.get('is_bomber', False):
+            badges_html.append('<div class="badge-chip badge-bomber">💣 BOMBER</div>')
+
+        if not badges_html:
+            badges_html.append('<div class="badge-chip badge-off">⚪ Nessun badge speciale attribuito</div>')
+
+        st.markdown(f'<div class="badge-container">{"".join(badges_html)}</div>', unsafe_allow_html=True)
 
     with tab2:
         st.subheader("⚡ Assistente Rilanci in Tempo Reale")
         g_live = st.selectbox("Seleziona il calciatore chiamato all'asta:", sorted(df['nome_completo'].unique()), key="live")
         pl = df[df['nome_completo'] == g_live].iloc[0]
 
-        st.info(f"**{pl['nome_completo']}** ({pl.get('Squadra', '')}) — Valore di Target: **{pl.get('prezzo_consigliato', 1)} cr** | Rilancio Limite: **{pl.get('prezzo_massimo', 1)} cr**")
-
-        if pl.get('Is_Rigorista', False):
-            st.caption("🎯 *Rigorista Titolare: Valore aumentato dal bonus specialista.*")
+        st.info(f"**{pl['nome_completo']}** ({pl.get('Squadra', '')}) — Target: **{pl.get('prezzo_consigliato', 1)} cr** | Limite: **{pl.get('prezzo_massimo', 1)} cr**")
+        
+        if pl.get('badge_summary') != '-':
+            st.caption(f"**Badge Attivi:** {pl.get('badge_summary')}")
 
         offerta = st.number_input("Offerta attuale chiamata al tavolo (crediti):", min_value=1, value=int(pl.get('prezzo_consigliato', 1)))
 
         if offerta <= pl.get('prezzo_consigliato', 1):
-            st.success("🟢 **COMPRALO ORA!** L'offerta è eccellente e sotto o pari alla stima ideale.")
+            st.success("🟢 **COMPRALO ORA!** Offerta eccellente, al sotto o pari alla stima ideale.")
         elif offerta <= pl.get('prezzo_massimo', 1):
-            st.warning("🟡 **VALUTA IL RILANCIO.** Superata la stima base, ma sei ancora entro la soglia di tolleranza.")
+            st.warning("🟡 **VALUTA IL RILANCIO.** Entro la soglia limite di tolleranza.")
         else:
-            st.error("🔴 **STOP! LASCIA ANDARE!** L'offerta supera il valore massimo calcolato dal modello.")
+            st.error("🔴 **STOP! LASCIA ANDARE!** Offerta superiore al valore massimo calcolato.")
 
     with tab3:
-        st.subheader("📊 Listino Prezzi Calibrato per Ruolo")
+        st.subheader("📊 Listino Prezzi & Ranking con Badges")
         r = st.radio("Filtra per Ruolo:", ['A', 'C', 'D', 'P'], horizontal=True)
         top = df[df['Ruolo'] == r].sort_values('prezzo_consigliato', ascending=False)
         st.dataframe(
-            top[['nome_completo', 'Squadra', 'slot', 'prezzo_consigliato', 'prezzo_massimo', 'Is_Rigorista', 'Is_Piazzati']], 
+            top[['nome_completo', 'Squadra', 'slot', 'prezzo_consigliato', 'prezzo_massimo', 'badge_summary']], 
             use_container_width=True,
             height=480
         )
