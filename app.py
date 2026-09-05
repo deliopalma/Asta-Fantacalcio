@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # -----------------------------------------------------------------------------
-# DESIGN SYSTEM: BLU SCURO DEEP + GLASSMORPHISM + OMBRE E RIFLESSI
+# DESIGN SYSTEM: BLU SCURO DEEP + HIGH CONTRAST + GLASSMORPHISM
 # -----------------------------------------------------------------------------
 st.markdown("""
     <style>
@@ -25,19 +25,25 @@ st.markdown("""
 
     /* Sidebar Glassmorphism */
     section[data-testid="stSidebar"] {
-        background-color: rgba(15, 23, 42, 0.75) !important;
+        background-color: rgba(15, 23, 42, 0.85) !important;
         backdrop-filter: blur(12px);
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Titoli generali con alto contrasto */
+    h1, h2, h3, h4, h5, h6, label, p {
+        color: #f8fafc !important;
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
     }
 
     /* Banner Principale Brandizzato */
     .brand-banner {
-        background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
-        border: 1px solid rgba(59, 130, 246, 0.3);
+        background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.5);
         border-radius: 20px;
         padding: 28px 32px;
         margin-bottom: 25px;
-        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.3);
         position: relative;
         overflow: hidden;
     }
@@ -49,7 +55,7 @@ st.markdown("""
         right: 0;
         width: 180px;
         height: 180px;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, transparent 70%);
         pointer-events: none;
     }
 
@@ -57,7 +63,7 @@ st.markdown("""
         font-size: 2.4rem;
         font-weight: 900;
         letter-spacing: -0.5px;
-        background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+        background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin: 0;
@@ -65,44 +71,55 @@ st.markdown("""
 
     .brand-subtitle {
         font-size: 1.05rem;
-        color: #94a3b8;
+        color: #cbd5e1;
         margin-top: 6px;
-        font-weight: 400;
+        font-weight: 500;
     }
 
     .signature-tag {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
-        border: 1px solid rgba(96, 165, 250, 0.4);
-        color: #93c5fd;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%);
+        border: 1px solid rgba(96, 165, 250, 0.6);
+        color: #bfdbfe;
         padding: 5px 14px;
         border-radius: 30px;
         font-size: 0.85rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-top: 14px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
     }
 
-    /* Riquadri Glassmorphism Lucidi con Ombra (Metrics Card) */
+    /* Riquadri Metric Card Lucidi ad Alto Contrasto */
     div[data-testid="stMetric"] {
-        background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-top: 1px solid rgba(255, 255, 255, 0.2); /* Riflesso Angolo Superiore */
-        border-left: 1px solid rgba(255, 255, 255, 0.15);
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 16px;
-        padding: 16px 20px;
-        box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        padding: 18px 20px;
+        box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    div[data-testid="stMetric"] label {
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+    }
+
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
     div[data-testid="stMetric"]:hover {
         transform: translateY(-2px);
-        box-shadow: 0 16px 32px -8px rgba(37, 99, 235, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25);
+        box-shadow: 0 16px 32px -8px rgba(37, 99, 235, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.3);
     }
 
-    /* Badges Specialisti Lucidi */
+    /* Badges Specialisti Lucidi e Leggibili */
     .badge-container {
         display: flex;
         gap: 12px;
@@ -111,59 +128,70 @@ st.markdown("""
     }
 
     .badge-glow-green {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.1) 100%);
-        border: 1px solid rgba(52, 211, 153, 0.4);
-        border-top: 1px solid rgba(110, 231, 183, 0.6);
-        color: #6ee7b7;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.3) 0%, rgba(5, 150, 105, 0.2) 100%);
+        border: 1px solid rgba(52, 211, 153, 0.6);
+        border-top: 1px solid rgba(110, 231, 183, 0.8);
+        color: #a7f3d0;
         padding: 8px 16px;
         border-radius: 12px;
         font-weight: 700;
         font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
 
     .badge-glow-blue {
-        background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.1) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.4);
-        border-top: 1px solid rgba(125, 211, 252, 0.6);
-        color: #7dd3fc;
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(2, 132, 199, 0.2) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.6);
+        border-top: 1px solid rgba(125, 211, 252, 0.8);
+        color: #bae6fd;
         padding: 8px 16px;
         border-radius: 12px;
         font-weight: 700;
         font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
     }
 
     .badge-glow-off {
-        background: rgba(30, 41, 59, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        color: #64748b;
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
         padding: 8px 16px;
         border-radius: 12px;
         font-weight: 500;
         font-size: 0.9rem;
     }
 
-    /* Tab Personalizzate */
+    /* Tab Personalizzate ed Evidenziate */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: rgba(15, 23, 42, 0.6);
-        padding: 6px;
+        background-color: rgba(15, 23, 42, 0.8);
+        padding: 8px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     .stTabs [data-baseweb="tab"] {
         border-radius: 10px;
-        color: #94a3b8;
-        font-weight: 600;
-        padding: 8px 20px;
+        color: #cbd5e1 !important;
+        font-weight: 700 !important;
+        padding: 10px 24px !important;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
     }
 
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        border: 1px solid rgba(147, 197, 253, 0.5) !important;
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.5);
+    }
+
+    /* Personalizzazione Selectbox e Input */
+    .stSelectbox label, .stNumberInput label {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #f1f5f9 !important;
     }
 
     /* Footer Elegante */
@@ -171,8 +199,8 @@ st.markdown("""
         text-align: center;
         padding: 24px;
         margin-top: 50px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        color: #64748b;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
         font-size: 0.88rem;
     }
     .footer-delio strong {
@@ -182,7 +210,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CARICAMENTO DATI E CALCOLO MATEMATICO (INVARIATO)
+# CARICAMENTO DATI E CALCOLO MATEMATICO
 # -----------------------------------------------------------------------------
 @st.cache_data
 def carica_e_calcola_modello():
@@ -329,7 +357,7 @@ if not df.empty and 'nome_completo' in df.columns:
 
         # Metric Cards Ombreggiate e Lucide
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Squadra e Ruolo", f"{p.get('Squadra', 'N/D')} ({p.get('Ruolo', 'N/D')})")
+        c1.metric("Squadra e Ruolo", f"{p.get('Squadra', 'N/D')} — ({p.get('Ruolo', 'N/D')})")
         c2.metric("Prezzo Consigliato", f"{p.get('prezzo_consigliato', 1)} cr")
         c3.metric("Rilancio Max", f"{p.get('prezzo_massimo', 1)} cr")
         c4.metric("Slot Asta Target", p.get('slot', 'N/D'))
