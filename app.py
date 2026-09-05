@@ -152,7 +152,8 @@ st.markdown("""
 @st.cache_data
 def carica_e_calcola_modello():
     try:
-        df = pd.read_excel('Tutti_2027.xlsx', sheet_name=0, engine='openpyxl')
+        # LETTURA CORRETTA DEL FILE NELLA CARTELLA DATA CON IL FOGLIO GIUSTO
+        df = pd.read_excel('data/Tutti_2027.xlsx', sheet_name='Tutti_2027', engine='openpyxl')
         df.columns = [str(col).strip() for col in df.columns]
         cols_lower = {str(col).lower(): col for col in df.columns}
         
