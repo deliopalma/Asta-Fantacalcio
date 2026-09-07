@@ -15,64 +15,33 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. CARICAMENTO IMMAGINI (SFONDO + LOGO SITO)
+# 2. CARICAMENTO LOGO SITO IN BASE64
 # ==========================================
-def get_base64_image(file_prefix):
-    """
-    Cerca un file nella cartella /data che inizi con `file_prefix`
-    e lo converte in stringa Base64 per l'integrazione HTML/CSS.
-    """
+def get_base64_logo(file_prefix):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(base_dir, "data")
     
     if not os.path.exists(data_dir):
         return None
 
-    extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg"]
-    target_path = None
-    
     for file in os.listdir(data_dir):
         file_lower = file.lower()
         if file_lower.startswith(file_prefix.lower()):
             target_path = os.path.join(data_dir, file)
-            break
-
-    if target_path and os.path.exists(target_path):
-        ext = os.path.splitext(target_path)[1].replace(".", "").lower()
-        if ext == "svg":
-            mime_type = "image/svg+xml"
-        else:
-            mime_type = f"image/{ext}"
+            ext = os.path.splitext(target_path)[1].replace(".", "").lower()
+            mime_type = "image/svg+xml" if ext == "svg" else f"image/{ext}"
             
-        with open(target_path, "rb") as img_file:
-            encoded_string = base64.b64encode(img_file.read()).decode()
-        return f"data:{mime_type};base64,{encoded_string}"
-        
+            with open(target_path, "rb") as img_file:
+                encoded_string = base64.b64encode(img_file.read()).decode()
+            return f"data:{mime_type};base64,{encoded_string}"
+            
     return None
 
-# Carica lo sfondo e il logo del sito
-bg_base64 = get_base64_image("fantabooster")
-logo_base64 = get_base64_image("nome sito") or get_base64_image("nomesito")
+logo_base64 = get_base64_logo("nome sito") or get_base64_logo("nomesito")
 
 # ==========================================
-# 3. CSS STYLING DEDICATO (GRAFICA TOTALE + TABELLA PREMIUM)
+# 3. CSS STYLING DEDICATO (PULITO, SENZA SFONDO IMMAGINE)
 # ==========================================
-bg_css_rule = f"""
-    .stApp {{
-        background: linear-gradient(rgba(11, 14, 20, 0.82), rgba(11, 14, 20, 0.92)), url("{bg_base64}") !important;
-        background-size: cover !important;
-        background-position: center center !important;
-        background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
-        color: #f1f5f9;
-    }}
-""" if bg_base64 else """
-    .stApp {
-        background: radial-gradient(circle at 50% 10%, #151a26 0%, #0b0e14 100%);
-        color: #f1f5f9;
-    }
-"""
-
 st.markdown(
     f"""
     <style>
@@ -82,7 +51,11 @@ st.markdown(
         font-family: 'Poppins', sans-serif;
     }}
 
-    {bg_css_rule}
+    /* SFONDO SCURO MODERNO SENZA IMMAGINI */
+    .stApp {{
+        background: radial-gradient(circle at 50% 10%, #151a26 0%, #0b0e14 100%) !important;
+        color: #f1f5f9;
+    }}
 
     /* CONTENITORE LOGO HEADER */
     .header-container {{
@@ -99,7 +72,7 @@ st.markdown(
         object-fit: contain;
     }}
 
-    /* HEADER TITOLO CON GLOW EFFECT (Fallback se non c'è il logo o in affiancamento) */
+    /* HEADER TITOLO CON GLOW EFFECT */
     .main-title {{
         font-size: 2.5rem;
         font-weight: 900;
@@ -122,8 +95,7 @@ st.markdown(
 
     /* SIDEBAR MODERNA */
     section[data-testid="stSidebar"] {{
-        background: rgba(15, 19, 28, 0.92) !important;
-        backdrop-filter: blur(15px);
+        background: rgba(15, 19, 28, 0.95) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 5px 0 25px rgba(0,0,0,0.5);
     }}
@@ -144,20 +116,18 @@ st.markdown(
         box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important;
     }}
 
-    /* CARDS SCHEDA CALCIATORE (GLASSMORPHISM) */
+    /* CARDS SCHEDA CALCIATORE */
     .player-card {{
-        background: rgba(19, 24, 37, 0.82);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: rgba(19, 24, 37, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.12);
-        border-top: 1px solid rgba(0, 230, 118, 0.6);
+        border-top: 2px solid #00E676;
         border-radius: 16px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     }}
 
-    /* METRICHE CUSTOM CON EFFETTO LUCIDO */
+    /* METRICHE CUSTOM */
     [data-testid="stMetric"] {{
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -194,27 +164,66 @@ st.markdown(
         font-weight: 700;
         letter-spacing: 0.3px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }}
 
-    /* STILIZZAZIONE AVANZATA TABELLA STREAMLIT (STAGED & GLOSSY) */
-    [data-testid="stDataFrame"] {{
-        background: rgba(15, 19, 28, 0.88) !important;
-        backdrop-filter: blur(14px) !important;
-        border-radius: 16px !important;
-        border: 1px solid rgba(0, 230, 118, 0.3) !important;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 230, 118, 0.15) !important;
-        padding: 10px !important;
+    /* STILIZZAZIONE TABELLA CUSTOM GLASSMORPHISM */
+    .custom-table-container {{
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 230, 118, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 230, 118, 0.15);
+        background: rgba(15, 19, 28, 0.85);
+        margin-top: 15px;
     }}
 
-    [data-testid="stDataFrame"] iframe {{
-        border-radius: 12px;
+    .custom-table {{
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 0.95rem;
     }}
 
-    div[data-testid="stDataFrame"] * {{
-        color: #ffffff !important;
-        font-weight: 600 !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    .custom-table th {{
+        background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(0, 176, 255, 0.15) 100%);
+        color: #00E676;
+        padding: 14px 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.8px;
+        border-bottom: 2px solid rgba(0, 230, 118, 0.4);
+    }}
+
+    .custom-table td {{
+        padding: 12px 18px;
+        color: #f1f5f9;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-weight: 500;
+    }}
+
+    .custom-table tbody tr:nth-child(even) {{
+        background-color: rgba(255, 255, 255, 0.02);
+    }}
+
+    .custom-table tbody tr:hover {{
+        background-color: rgba(0, 230, 118, 0.1) !important;
+        transition: background-color 0.2s ease;
+    }}
+
+    .badge-ruolo {{
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.8rem;
+        background: rgba(0, 230, 118, 0.15);
+        color: #00E676;
+        border: 1px solid rgba(0, 230, 118, 0.4);
+    }}
+
+    .val-crediti {{
+        color: #00B0FF;
+        font-weight: 700;
     }}
 
     hr {{
@@ -239,7 +248,7 @@ if logo_base64:
         unsafe_allow_html=True,
     )
 else:
-    st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.3</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.4</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="sub-title">Listone Asta Ordinato per Valore Crediti — Delio Palma</div>', unsafe_allow_html=True)
 st.markdown("---")
@@ -455,44 +464,52 @@ if ricerca_nome and not df_filtered.empty:
     st.markdown("---")
 
 # ==========================================
-# 9. TABELLA GENERALE HIGH CONTRAST & GLOSSY
+# 9. TABELLA GENERALE CUSTOM (HTML/CSS ARMONIOSA)
 # ==========================================
 st.markdown("### 📋 Listone Calciatori (Ordinato per Crediti)")
 
-cols_to_display = []
-possible_cols = [
-    col_ruolo,
-    col_nome,
-    col_squadra,
-    col_slot,
-    col_p_cons,
-    col_p_max,
-    col_verdetto,
-]
+# Costruzione HTML della tabella
+rows_html = ""
+for _, row in df_filtered.iterrows():
+    r_ruolo = row["RUOLO_CLEAN"]
+    r_nome = row[col_nome] if col_nome and pd.notna(row[col_nome]) else "-"
+    r_squadra = row[col_squadra] if col_squadra and pd.notna(row[col_squadra]) else "-"
+    r_slot = row[col_slot] if col_slot and pd.notna(row[col_slot]) else "-"
+    r_p_cons = parse_num(row[col_p_cons]) if col_p_cons else 0
+    r_p_max = parse_num(row[col_p_max]) if col_p_max else 0
+    r_verdetto = row[col_verdetto] if col_verdetto and pd.notna(row[col_verdetto]) else "-"
 
-for c in possible_cols:
-    if c is not None and c in df_filtered.columns and c not in cols_to_display:
-        cols_to_display.append(c)
+    rows_html += f"""
+    <tr>
+        <td><span class="badge-ruolo">{r_ruolo}</span></td>
+        <td style="font-weight: 700;">{r_nome}</td>
+        <td>{r_squadra}</td>
+        <td>{r_slot}</td>
+        <td class="val-crediti">{r_p_cons} cr</td>
+        <td style="color: #cbd5e1;">{r_p_max} cr</td>
+        <td>{r_verdetto}</td>
+    </tr>
+    """
 
-column_configuration = {}
-if col_ruolo:
-    column_configuration[col_ruolo] = st.column_config.TextColumn("Ruolo")
-if col_nome:
-    column_configuration[col_nome] = st.column_config.TextColumn("Nome")
-if col_squadra:
-    column_configuration[col_squadra] = st.column_config.TextColumn("Squadra")
-if col_slot:
-    column_configuration[col_slot] = st.column_config.TextColumn("Slot")
-if col_p_cons:
-    column_configuration[col_p_cons] = st.column_config.NumberColumn("Prezzo Consigliato", format="%d cr")
-if col_p_max:
-    column_configuration[col_p_max] = st.column_config.NumberColumn("Prezzo Max", format="%d cr")
-if col_verdetto:
-    column_configuration[col_verdetto] = st.column_config.TextColumn("Verdetto")
+table_html = f"""
+<div class="custom-table-container">
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>Ruolo</th>
+                <th>Nome</th>
+                <th>Squadra</th>
+                <th>Slot</th>
+                <th>Prezzo Cons.</th>
+                <th>Prezzo Max</th>
+                <th>Verdetto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {rows_html}
+        </tbody>
+    </table>
+</div>
+"""
 
-st.dataframe(
-    df_filtered[cols_to_display],
-    use_container_width=True,
-    hide_index=True,
-    column_config=column_configuration,
-)
+st.markdown(table_html, unsafe_allow_html=True)
