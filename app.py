@@ -40,40 +40,40 @@ def get_base64_logo(file_prefix):
 logo_base64 = get_base64_logo("nome sito") or get_base64_logo("nomesito")
 
 # ==========================================
-# 3. CSS STYLING DEDICATO (PULITO, SENZA SFONDO IMMAGINE)
+# 3. CSS STYLING DEDICATO (PULITO E ARMONIOSO)
 # ==========================================
 st.markdown(
-    f"""
+    """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
 
-    html, body, [class*="css"] {{
+    html, body, [class*="css"] {
         font-family: 'Poppins', sans-serif;
-    }}
+    }
 
-    /* SFONDO SCURO MODERNO SENZA IMMAGINI */
-    .stApp {{
+    /* SFONDO SCURO MODERNO */
+    .stApp {
         background: radial-gradient(circle at 50% 10%, #151a26 0%, #0b0e14 100%) !important;
         color: #f1f5f9;
-    }}
+    }
 
     /* CONTENITORE LOGO HEADER */
-    .header-container {{
+    .header-container {
         display: flex;
         align-items: center;
         gap: 20px;
         margin-bottom: 5px;
-    }}
+    }
 
-    .site-logo {{
+    .site-logo {
         max-height: 75px;
         width: auto;
         filter: drop-shadow(0px 4px 15px rgba(0, 230, 118, 0.4));
         object-fit: contain;
-    }}
+    }
 
     /* HEADER TITOLO CON GLOW EFFECT */
-    .main-title {{
+    .main-title {
         font-size: 2.5rem;
         font-weight: 900;
         background: linear-gradient(135deg, #00E676 0%, #00B0FF 100%);
@@ -83,25 +83,25 @@ st.markdown(
         margin-bottom: 0px;
         letter-spacing: -0.5px;
         line-height: 1.1;
-    }}
+    }
     
-    .sub-title {{
+    .sub-title {
         color: #cbd5e1;
         font-size: 0.95rem;
         font-weight: 500;
         margin-top: 5px;
         margin-bottom: 25px;
-    }}
+    }
 
     /* SIDEBAR MODERNA */
-    section[data-testid="stSidebar"] {{
+    section[data-testid="stSidebar"] {
         background: rgba(15, 19, 28, 0.95) !important;
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-    }}
+    }
 
     /* INPUT E SELECTBOX GLOSSY */
-    .stTextInput > div > div > input, .stSelectbox > div > div > div {{
+    .stTextInput > div > div > input, .stSelectbox > div > div > div {
         background: rgba(22, 28, 41, 0.85) !important;
         border: 1px solid rgba(0, 230, 118, 0.35) !important;
         border-radius: 10px !important;
@@ -109,15 +109,10 @@ st.markdown(
         font-weight: 600 !important;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 10px rgba(0,230,118,0.1);
         transition: all 0.3s ease;
-    }}
-
-    .stTextInput > div > div > input:focus, .stSelectbox > div > div > div:focus {{
-        border-color: #00E676 !important;
-        box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important;
-    }}
+    }
 
     /* CARDS SCHEDA CALCIATORE */
-    .player-card {{
+    .player-card {
         background: rgba(19, 24, 37, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-top: 2px solid #00E676;
@@ -125,34 +120,32 @@ st.markdown(
         padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    }}
+    }
 
     /* METRICHE CUSTOM */
-    [data-testid="stMetric"] {{
+    [data-testid="stMetric"] {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         padding: 12px 15px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }}
+    }
 
-    [data-testid="stMetricLabel"] {{
+    [data-testid="stMetricLabel"] {
         color: #cbd5e1 !important;
         font-weight: 600 !important;
         font-size: 0.82rem !important;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }}
+    }
 
-    [data-testid="stMetricValue"] {{
+    [data-testid="stMetricValue"] {
         color: #ffffff !important;
         font-weight: 800 !important;
         font-size: 1.4rem !important;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 0 10px rgba(0,230,118,0.25);
-    }}
+    }
 
     /* BADGES PREMIUM */
-    .badge-tag {{
+    .badge-tag {
         display: inline-block;
         background: linear-gradient(135deg, rgba(0,230,118,0.2) 0%, rgba(0,176,255,0.2) 100%);
         color: #00E676;
@@ -162,78 +155,24 @@ st.markdown(
         margin: 4px;
         font-size: 0.8rem;
         font-weight: 700;
-        letter-spacing: 0.3px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    }}
+    }
 
-    /* STILIZZAZIONE TABELLA CUSTOM GLASSMORPHISM */
-    .custom-table-container {{
-        overflow-x: auto;
-        border-radius: 16px;
-        border: 1px solid rgba(0, 230, 118, 0.3);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 230, 118, 0.15);
-        background: rgba(15, 19, 28, 0.85);
-        margin-top: 15px;
-    }}
+    /* OVERRIDE STILE TABELLA STREAMLIT PER UNIFORMARLA */
+    div[data-testid="stDataFrame"] {
+        border: 1px solid rgba(0, 230, 118, 0.3) !important;
+        border-radius: 12px !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    }
 
-    .custom-table {{
-        width: 100%;
-        border-collapse: collapse;
-        text-align: left;
-        font-size: 0.95rem;
-    }}
-
-    .custom-table th {{
-        background: linear-gradient(135deg, rgba(0, 230, 118, 0.15) 0%, rgba(0, 176, 255, 0.15) 100%);
-        color: #00E676;
-        padding: 14px 18px;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.8px;
-        border-bottom: 2px solid rgba(0, 230, 118, 0.4);
-    }}
-
-    .custom-table td {{
-        padding: 12px 18px;
-        color: #f1f5f9;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        font-weight: 500;
-    }}
-
-    .custom-table tbody tr:nth-child(even) {{
-        background-color: rgba(255, 255, 255, 0.02);
-    }}
-
-    .custom-table tbody tr:hover {{
-        background-color: rgba(0, 230, 118, 0.1) !important;
-        transition: background-color 0.2s ease;
-    }}
-
-    .badge-ruolo {{
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 8px;
-        font-weight: 800;
-        font-size: 0.8rem;
-        background: rgba(0, 230, 118, 0.15);
-        color: #00E676;
-        border: 1px solid rgba(0, 230, 118, 0.4);
-    }}
-
-    .val-crediti {{
-        color: #00B0FF;
-        font-weight: 700;
-    }}
-
-    hr {{
+    hr {
         border: 0;
         height: 1px;
         background: linear-gradient(90deg, rgba(0,230,118,0) 0%, rgba(0,230,118,0.5) 50%, rgba(0,230,118,0) 100%);
         margin: 25px 0;
-    }}
+    }
     </style>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
@@ -464,52 +403,64 @@ if ricerca_nome and not df_filtered.empty:
     st.markdown("---")
 
 # ==========================================
-# 9. TABELLA GENERALE CUSTOM (HTML/CSS ARMONIOSA)
+# 9. TABELLA GENERALE ARMONIOSA CON STYLER
 # ==========================================
 st.markdown("### 📋 Listone Calciatori (Ordinato per Crediti)")
 
-# Costruzione HTML della tabella
-rows_html = ""
-for _, row in df_filtered.iterrows():
-    r_ruolo = row["RUOLO_CLEAN"]
-    r_nome = row[col_nome] if col_nome and pd.notna(row[col_nome]) else "-"
-    r_squadra = row[col_squadra] if col_squadra and pd.notna(row[col_squadra]) else "-"
-    r_slot = row[col_slot] if col_slot and pd.notna(row[col_slot]) else "-"
-    r_p_cons = parse_num(row[col_p_cons]) if col_p_cons else 0
-    r_p_max = parse_num(row[col_p_max]) if col_p_max else 0
-    r_verdetto = row[col_verdetto] if col_verdetto and pd.notna(row[col_verdetto]) else "-"
+# Costruzione del dataframe da visualizzare
+cols_map = {}
+if col_ruolo: cols_map[col_ruolo] = "Ruolo"
+if col_nome: cols_map[col_nome] = "Nome"
+if col_squadra: cols_map[col_squadra] = "Squadra"
+if col_slot: cols_map[col_slot] = "Slot"
+if col_p_cons: cols_map[col_p_cons] = "Prezzo Consigliato"
+if col_p_max: cols_map[col_p_max] = "Prezzo Max"
+if col_verdetto: cols_map[col_verdetto] = "Verdetto"
 
-    rows_html += f"""
-    <tr>
-        <td><span class="badge-ruolo">{r_ruolo}</span></td>
-        <td style="font-weight: 700;">{r_nome}</td>
-        <td>{r_squadra}</td>
-        <td>{r_slot}</td>
-        <td class="val-crediti">{r_p_cons} cr</td>
-        <td style="color: #cbd5e1;">{r_p_max} cr</td>
-        <td>{r_verdetto}</td>
-    </tr>
-    """
+df_table = df_filtered[list(cols_map.keys())].rename(columns=cols_map).copy()
 
-table_html = f"""
-<div class="custom-table-container">
-    <table class="custom-table">
-        <thead>
-            <tr>
-                <th>Ruolo</th>
-                <th>Nome</th>
-                <th>Squadra</th>
-                <th>Slot</th>
-                <th>Prezzo Cons.</th>
-                <th>Prezzo Max</th>
-                <th>Verdetto</th>
-            </tr>
-        </thead>
-        <tbody>
-            {rows_html}
-        </tbody>
-    </table>
-</div>
-"""
+# Pulizia numerica per le colonne di prezzo
+if "Prezzo Consigliato" in df_table.columns:
+    df_table["Prezzo Consigliato"] = df_table["Prezzo Consigliato"].apply(parse_num)
+if "Prezzo Max" in df_table.columns:
+    df_table["Prezzo Max"] = df_table["Prezzo Max"].apply(parse_num)
 
-st.markdown(table_html, unsafe_allow_html=True)
+# Applicazione stili visivi personalizzati (armoniosi col sito)
+styled_df = df_table.style\
+    .format({
+        "Prezzo Consigliato": "{:d} cr",
+        "Prezzo Max": "{:d} cr"
+    })\
+    .set_properties(**{
+        'background-color': '#0f131c',
+        'color': '#f1f5f9',
+        'border-color': 'rgba(255, 255, 255, 0.05)',
+        'font-family': 'Poppins, sans-serif'
+    })\
+    .set_properties(subset=['Prezzo Consigliato'], **{
+        'color': '#00E676',
+        'font-weight': 'bold'
+    })\
+    .set_properties(subset=['Ruolo'], **{
+        'color': '#00B0FF',
+        'font-weight': 'bold'
+    })\
+    .set_table_styles([
+        {
+            'selector': 'th',
+            'props': [
+                ('background-color', '#151b27'),
+                ('color', '#00E676'),
+                ('font-weight', 'bold'),
+                ('text-transform', 'uppercase'),
+                ('border-bottom', '2px solid #00E676')
+            ]
+        }
+    ])
+
+st.dataframe(
+    styled_df,
+    use_container_width=True,
+    hide_index=True,
+    height=600
+)
