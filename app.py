@@ -21,7 +21,6 @@ def get_base64_background():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(base_dir, "data")
     
-    # Cerca l'immagine "Fantabooster" con qualsiasi estensione
     extensions = [".png", ".jpg", ".jpeg", ".webp"]
     bg_path = None
     
@@ -31,9 +30,8 @@ def get_base64_background():
             bg_path = temp_path
             break
             
-    if not bg_path:
-        # Fallback nel caso il nome sia scritto in minuscolo
-        for file in os.listdir(data_dir) if os.path.exists(data_dir) else []:
+    if not bg_path and os.path.exists(data_dir):
+        for file in os.listdir(data_dir):
             if file.lower().startswith("fantabooster"):
                 bg_path = os.path.join(data_dir, file)
                 break
@@ -48,7 +46,7 @@ def get_base64_background():
 bg_base64 = get_base64_background()
 
 # ==========================================
-# 3. CSS STYLING DEDICATO (STILE FANTALAB CON SFONDO CUSTOM)
+# 3. CSS STYLING DEDICATO (GRAFICA TOTALE + TABELLA PREMIUM)
 # ==========================================
 bg_css_rule = f"""
     .stApp {{
@@ -157,7 +155,7 @@ st.markdown(
         text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 0 10px rgba(0,230,118,0.25);
     }}
 
-    /* BADGES PREMIUM STILE FANTALAB */
+    /* BADGES PREMIUM */
     .badge-tag {{
         display: inline-block;
         background: linear-gradient(135deg, rgba(0,230,118,0.2) 0%, rgba(0,176,255,0.2) 100%);
@@ -173,14 +171,26 @@ st.markdown(
         text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }}
 
-    /* TABELLA CON TESTO BIANCO E HIGH CONTRAST */
+    /* STILIZZAZIONE AVANZATA TABELLA STREAMLIT (STAGED & GLOSSY) */
     [data-testid="stDataFrame"] {{
-        background: rgba(15, 19, 28, 0.85);
-        backdrop-filter: blur(10px);
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-        padding: 8px;
+        background: rgba(15, 19, 28, 0.88) !important;
+        backdrop-filter: blur(14px) !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(0, 230, 118, 0.3) !important;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 230, 118, 0.15) !important;
+        padding: 10px !important;
+    }}
+
+    /* Intestazione Tabella */
+    [data-testid="stDataFrame"] iframe {{
+        border-radius: 12px;
+    }}
+
+    /* Styling celle e testi interni della griglia */
+    div[data-testid="stDataFrame"] * {{
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     }}
 
     hr {{
@@ -195,7 +205,7 @@ st.markdown(
 )
 
 # Header Principale
-st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.1</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.2</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Listone Asta Ordinato per Valore Crediti — Delio Palma</div>', unsafe_allow_html=True)
 st.markdown("---")
 
@@ -412,7 +422,7 @@ if ricerca_nome and not df_filtered.empty:
     st.markdown("---")
 
 # ==========================================
-# 9. TABELLA GENERALE HIGH CONTRAST
+# 9. TABELLA GENERALE HIGH CONTRAST & GLOSSY
 # ==========================================
 st.markdown("### 📋 Listone Calciatori (Ordinato per Crediti)")
 
