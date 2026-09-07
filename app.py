@@ -4,17 +4,17 @@ import pandas as pd
 import streamlit as st
 
 # ==========================================
-# 1. CONFIGURAZIONE PAGINA
+# 1. CONFIGURAZIONE PAGINA STREAMLIT
 # ==========================================
 st.set_page_config(
-    page_title="FantaBooster® Engine v3.6",
+    page_title="FantaBooster® Engine",
     page_icon="⚽",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ==========================================
-# 2. CSS TEMA DARK & STILE METRICHE
+# 2. CSS PERSONALIZZATO (DARK & PULITO)
 # ==========================================
 st.markdown(
     """
@@ -26,24 +26,7 @@ st.markdown(
     h1 {
         color: #00E676 !important;
         font-weight: 800;
-    }
-    h2, h3 {
-        color: #00B0FF !important;
-    }
-    div[data-testid="stMetric"] {
-        background-color: #1e222d;
-        border: 1px solid #2e364f;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-    }
-    div[data-testid="stMetricLabel"] {
-        color: #b0bec5 !important;
-        font-size: 0.9rem !important;
-    }
-    div[data-testid="stMetricValue"] {
-        color: #00E676 !important;
-        font-weight: 700;
+        margin-bottom: 0px;
     }
     section[data-testid="stSidebar"] {
         background-color: #131722;
@@ -58,15 +41,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine Version 3.6")
-st.caption(
-    "Transfermarkt Stats 25/26 & 26/27 Projections Integrated — Created by Delio Palma"
-)
+st.title("⚽ FantaBooster® Engine")
+st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
 
 # ==========================================
-# 3. LETTURA & PARSING ROBUSTO CSV
+# 3. LETTURA DATI
 # ==========================================
 @st.cache_data
 def load_data():
@@ -74,13 +55,10 @@ def load_data():
     file_path = os.path.join(base_dir, "data", "tutti_2027.csv")
 
     if not os.path.exists(file_path):
-        st.error(
-            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che 'tutti_2027.csv' sia presente nella cartella 'data/'."
-        )
+        st.error(f"❌ Impossibile trovare il file in '{file_path}'.")
         return pd.DataFrame()
 
     try:
-        # Prova vari separatori ed encoding
         try:
             df = pd.read_csv(file_path, encoding="utf-8-sig")
             if df.shape[1] <= 1:
@@ -91,10 +69,9 @@ def load_data():
             except Exception:
                 df = pd.read_csv(file_path, sep=",", encoding="latin1")
 
-        # Pulizia nomi colonne
         df.columns = df.columns.astype(str).str.strip()
 
-        # Funzione pulizia valori numerici
+        # Funzione pulizia numeri
         def clean_val(val):
             if pd.isna(val):
                 return 0.0
@@ -107,7 +84,6 @@ def load_data():
                     return 0.0
             return 0.0
 
-        # Pulizia estesa per le colonne numeriche
         for col in df.columns:
             col_l = col.lower()
             if any(
@@ -121,12 +97,10 @@ def load_data():
                     "subit",
                     "clean",
                     "slot",
-                    "p_",
                 ]
             ):
                 df[col] = df[col].apply(clean_val)
 
-        # Gestione Normalizzata Ruolo
         col_r = next((c for c in df.columns if "ruolo" in c.lower()), None)
         if col_r:
             df["RUOLO_CLEAN"] = df[col_r].astype(str).str.strip().str.upper()
@@ -136,22 +110,16 @@ def load_data():
         return df
 
     except Exception as e:
-        st.error(f"❌ Errore nella lettura del CSV: {e}")
+        st.error(f"❌ Errore lettura CSV: {e}")
         return pd.DataFrame()
 
 
 df = load_data()
 
 if df.empty:
-    st.warning(
-        "Nessun dato trovato. Assicurati che 'tutti_2027.csv' sia presente."
-    )
     st.stop()
 
 
-# ==========================================
-# 4. ALGORITMO DI TROVA-COLONNE
-# ==========================================
 def find_col(keywords, exclude=None):
     for kw in keywords:
         for c in df.columns:
@@ -173,38 +141,32 @@ col_p_cons = find_col(["consigliato", "p cons", "prezzo cons", "p_cons"])
 col_p_max = find_col(["massimo", "p max", "prezzo max", "p_max"])
 col_pres = find_col(["presenz", "pres", "partite", "pg"])
 col_gol = find_col(
-    ["goal fatti", "gol fatti", "goal", "gol", "gf", "g"], exclude=["subit"]
+    ["goal fatti", "gol fatti", "goal", "gol", "gf"], exclude=["subit"]
 )
-col_assist = find_col(["assist", "ass", "ast", "a"])
-col_subiti = find_col(["subit", "gs"])
-col_clean = find_col(["clean", "cs"])
+col_assist = find_col(["assist", "ass", "ast"])
 col_badge = find_col(["badge", "tag", "note"])
-col_verdetto = find_col(["verdetto", "prendi o lascia", "consiglio", "decisione"])
+col_verdetto = find_col(["verdetto", "prendi o lascia", "consiglio"])
 
 # ==========================================
-# 5. SIDEBAR: FILTRI
+# 4. FILTRI SIDEBAR
 # ==========================================
-st.sidebar.header("🔍 Filtri Asta")
+st.sidebar.header("🔍 Ricerca e Filtri")
 
-# Ruolo
+ricerca_nome = st.sidebar.text_input("🔎 Cerca per Nome:", "")
+
 ruoli_disponibili = ["TUTTI"] + [
     r for r in sorted(df["RUOLO_CLEAN"].unique()) if r and r != "NAN"
 ]
-ruolo_selezionato = st.sidebar.selectbox("Filtra Ruolo", ruoli_disponibili)
+ruolo_selezionato = st.sidebar.selectbox("Filtra per Ruolo", ruoli_disponibili)
 
-# Squadra
 if col_squadra:
     squadre = ["TUTTE"] + sorted(
         list(df[col_squadra].dropna().astype(str).unique())
     )
-    squadra_selezionata = st.sidebar.selectbox("Filtra Squadra", squadre)
+    squadra_selezionata = st.sidebar.selectbox("Filtra per Squadra", squadre)
 else:
     squadra_selezionata = "TUTTE"
 
-# Nome
-ricerca_nome = st.sidebar.text_input("Cerca Giocatore:", "")
-
-# Slot
 if col_slot:
     slots = ["TUTTI"] + sorted(
         list(
@@ -214,26 +176,29 @@ if col_slot:
             .unique()
         )
     )
-    slot_selezionato = st.sidebar.selectbox("Filtra Slot", slots)
+    slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots)
 else:
     slot_selezionato = "TUTTI"
 
-# Verdetto
 if col_verdetto:
     verdetti = ["TUTTI"] + sorted(
         list(df[col_verdetto].dropna().astype(str).unique())
     )
-    verdetto_selezionato = st.sidebar.selectbox(
-        "Verdetto Algoritmo 🎲", verdetti
-    )
+    verdetto_selezionato = st.sidebar.selectbox("Filtra per Verdetto", verdetti)
 else:
     verdetto_selezionato = "TUTTI"
 
-
 # ==========================================
-# 6. FILTRAGGIO DATI
+# 5. APPLICAZIONE FILTRI
 # ==========================================
 df_filtered = df.copy()
+
+if ricerca_nome and col_nome:
+    df_filtered = df_filtered[
+        df_filtered[col_nome]
+        .astype(str)
+        .str.contains(ricerca_nome, case=False, na=False)
+    ]
 
 if ruolo_selezionato != "TUTTI":
     df_filtered = df_filtered[df_filtered["RUOLO_CLEAN"] == ruolo_selezionato]
@@ -241,13 +206,6 @@ if ruolo_selezionato != "TUTTI":
 if squadra_selezionata != "TUTTE" and col_squadra:
     df_filtered = df_filtered[
         df_filtered[col_squadra].astype(str) == squadra_selezionata
-    ]
-
-if ricerca_nome and col_nome:
-    df_filtered = df_filtered[
-        df_filtered[col_nome]
-        .astype(str)
-        .str.contains(ricerca_nome, case=False, na=False)
     ]
 
 if slot_selezionato != "TUTTI" and col_slot:
@@ -260,56 +218,20 @@ if verdetto_selezionato != "TUTTI" and col_verdetto:
         df_filtered[col_verdetto].astype(str) == verdetto_selezionato
     ]
 
+# ==========================================
+# 6. ORDINAMENTO PER PREZZO (DAL PIÙ COSTOSO)
+# ==========================================
+sort_col = (
+    col_p_cons
+    if col_p_cons
+    else (col_p_max if col_p_max else df_filtered.columns[0])
+)
+df_filtered = df_filtered.sort_values(by=sort_col, ascending=False)
 
 # ==========================================
-# 7. METRICHE
+# 7. TABELLA PRINCIPALE
 # ==========================================
-st.subheader("📊 Panoramica Selezione")
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric("Calciatori Filtrati", len(df_filtered))
-
-with col2:
-    if col_slot:
-        top_players = len(
-            df_filtered[df_filtered[col_slot].astype(str).str.startswith("1")]
-        )
-        st.metric("Giocatori 1° Slot", top_players)
-    else:
-        st.metric("Giocatori 1° Slot", "-")
-
-with col3:
-    if col_p_cons and len(df_filtered) > 0:
-        media_p = df_filtered[col_p_cons].mean()
-        st.metric("Prezzo Consigliato Medio", f"{int(media_p)} cr")
-    else:
-        st.metric("Prezzo Consigliato Medio", "0 cr")
-
-with col4:
-    if col_badge:
-        badge_count = len(
-            df_filtered[
-                df_filtered[col_badge].notna()
-                & (df_filtered[col_badge].astype(str).str.strip() != "")
-            ]
-        )
-        st.metric("Badge Speciali", badge_count)
-    else:
-        st.metric("Badge Speciali", "-")
-
-st.markdown("---")
-
-
-# ==========================================
-# 8. COSTRUZIONE TABELLA FINALE
-# ==========================================
-st.subheader("📋 Tabella Calciatori & Consigli Asta")
-
-# Definiamo le colonne principali
 cols_to_display = []
-
-# Mettiamo in ordine sicuro
 possible_cols = [
     col_ruolo,
     col_nome,
@@ -317,22 +239,19 @@ possible_cols = [
     col_slot,
     col_p_cons,
     col_p_max,
-    col_pres,
-    col_gol,
-    col_assist,
-    col_subiti,
-    col_clean,
     col_badge,
     col_verdetto,
 ]
+
+# Aggiungiamo le statistiche storiche solo se è attivo un filtro specifico (es. ricerca nome o ruolo)
+if ricerca_nome or ruolo_selezionato != "TUTTI":
+    possible_cols.extend([col_pres, col_gol, col_assist])
 
 for c in possible_cols:
     if c is not None and c in df_filtered.columns and c not in cols_to_display:
         cols_to_display.append(c)
 
-# Configurazione formattazione visiva
 column_configuration = {}
-
 if col_ruolo:
     column_configuration[col_ruolo] = st.column_config.TextColumn("Ruolo")
 if col_nome:
@@ -345,11 +264,11 @@ if col_slot:
     )
 if col_p_cons:
     column_configuration[col_p_cons] = st.column_config.NumberColumn(
-        "Consigliato", format="%d cr"
+        "Prezzo Consigliato", format="%d cr"
     )
 if col_p_max:
     column_configuration[col_p_max] = st.column_config.NumberColumn(
-        "Massimo", format="%d cr"
+        "Prezzo Max", format="%d cr"
     )
 if col_pres:
     column_configuration[col_pres] = st.column_config.NumberColumn(
@@ -363,14 +282,6 @@ if col_assist:
     column_configuration[col_assist] = st.column_config.NumberColumn(
         "Assist 🅰️", format="%d"
     )
-if col_subiti:
-    column_configuration[col_subiti] = st.column_config.NumberColumn(
-        "Gol Subiti 🥊", format="%d"
-    )
-if col_clean:
-    column_configuration[col_clean] = st.column_config.NumberColumn(
-        "Clean Sheet 🧤", format="%d"
-    )
 if col_badge:
     column_configuration[col_badge] = st.column_config.TextColumn("Badge 🎖️")
 
@@ -379,31 +290,4 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
     column_config=column_configuration,
-)
-
-# ==========================================
-# 9. UTILITY DI DEBUG (Espandibile)
-# ==========================================
-with st.expander("🛠️ Strumento di Diagnostica Colonne CSV"):
-    st.write("**Tutte le colonne lette dal CSV:**", list(df.columns))
-    st.write("**Mappatura Riconosciuta:**")
-    st.json(
-        {
-            "Ruolo": col_ruolo,
-            "Nome": col_nome,
-            "Squadra": col_squadra,
-            "Slot": col_slot,
-            "Prezzo Cons": col_p_cons,
-            "Prezzo Max": col_p_max,
-            "Presenze": col_pres,
-            "Gol": col_gol,
-            "Assist": col_assist,
-            "Gol Subiti": col_subiti,
-            "Clean Sheet": col_clean,
-        }
-    )
-
-st.markdown("---")
-st.caption(
-    "FantaBooster® Engine v3.6 | Sviluppato per Asta Fantacalcio 2026/2027"
 )
