@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v3.9")
+st.title("⚽ FantaBooster® Engine v4.0")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
@@ -104,7 +104,7 @@ if df.empty:
 
 
 # ==========================================
-# 4. MAPPATURA PRECISA DELLE COLONNE
+# 4. MAPPATURA PRECISA E DISACCOPPIATA DELLE COLONNE
 # ==========================================
 def extract_num(val):
     """Estrae un numero intero/float da qualsiasi valore senza corromperlo."""
@@ -120,20 +120,31 @@ def extract_num(val):
     return 0
 
 
-def find_col_exact(targets):
-    """Cerca prima la corrispondenza esatta del nome colonna nel CSV."""
+def find_col_exact(targets, exclude=None):
+    """Cerca la colonna nel CSV verificando che non contenga termini esclusi."""
+    if exclude is None:
+        exclude = []
+    
+    # 1. Corrispondenza esatta del nome colonna
     for t in targets:
         for c in df.columns:
             if c == "RUOLO_CLEAN":
                 continue
-            if c.lower().strip() == t.lower().strip():
+            c_clean = c.lower().strip()
+            if any(ex in c_clean for ex in exclude):
+                continue
+            if c_clean == t.lower().strip():
                 return c
-    # Fallback su ricerca parziale
+
+    # 2. Corrispondenza parziale se non trova quella esatta
     for t in targets:
         for c in df.columns:
             if c == "RUOLO_CLEAN":
                 continue
-            if t.lower().strip() in c.lower().strip():
+            c_clean = c.lower().strip()
+            if any(ex in c_clean for ex in exclude):
+                continue
+            if t.lower().strip() in c_clean:
                 return c
     return None
 
@@ -147,8 +158,11 @@ col_p_cons = find_col_exact(["prezzo consigliato", "p_cons", "prezzo cons", "con
 col_p_max = find_col_exact(["prezzo massimo", "prezzo max", "p_max", "massimo"])
 
 col_pres = find_col_exact(["presenz", "presenze", "pres", "partite", "pg"])
-col_gol = find_col_exact(["goal fatti", "gol fatti", "gol", "goal", "gf"])
-col_assist = find_col_exact(["assist", "ass", "ast"])
+col_gol = find_col_exact(["goal fatti", "gol fatti", "gol", "goal", "gf"], exclude=["subiti", "prezzo", "consigliato", "max", "massimo"])
+
+# Mappatura rigorosa per assist: si escludono esplicitamente termini come "massimo" o "max"
+col_assist = find_col_exact(["assist fatti", "assist", "ast"], exclude=["max", "massimo", "prezzo", "consigliato"])
+
 col_subiti = find_col_exact(["goal subiti", "gol subiti", "subiti", "gs"])
 col_clean = find_col_exact(["clean sheet", "cleansheet", "clean", "cs"])
 col_badge = find_col_exact(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
@@ -262,19 +276,17 @@ if ricerca_nome and not df_filtered.empty:
             if col_badge and pd.notna(player[col_badge]):
                 raw_badges = str(player[col_badge]).strip()
                 if raw_badges and raw_badges.lower() != "nan":
-                    # Separazione flessibile su virgola, punto e virgola, trattino o slash
                     badge_list = [b.strip() for b in re.split(r"[,;|/\n]+", raw_badges) if b.strip()]
                     if badge_list:
                         badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
                         st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
 
-            # Strumento per verificare le intestazioni esatte riconosciute
+            # Strumento di verifica per confermare che le colonne siano distinte
             with st.expander("🔎 Dettaglio Colonne Riconosciute nel CSV"):
                 st.write({
-                    "Colonna Nome": col_nome,
-                    "Colonna Squadra": col_squadra,
-                    "Colonna Gol": col_gol,
+                    "Colonna Prezzo Max": col_p_max,
                     "Colonna Assist": col_assist,
+                    "Colonna Gol": col_gol,
                     "Colonna Badges": col_badge,
                 })
 
