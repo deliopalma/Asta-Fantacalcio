@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v4.2")
+st.title("⚽ FantaBooster® Engine v4.3")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
@@ -80,7 +80,7 @@ def load_data():
             except Exception:
                 df = pd.read_csv(file_path, sep=",", encoding="latin1")
 
-        # Pulizia nomi colonne dagli spazi vuoti
+        # Pulizia nomi colonne
         df.columns = df.columns.astype(str).str.strip()
 
         # Normalizzazione Ruolo
@@ -104,10 +104,10 @@ if df.empty:
 
 
 # ==========================================
-# 4. MAPPATURA DIRETTA E SICURA DELLE COLONNE
+# 4. MAPPATURA ROBUSTA DELLE COLONNE
 # ==========================================
 def extract_num(val):
-    """Estrae un intero o float da qualsiasi stringa o valore numerico."""
+    """Estrae un numero intero da qualsiasi formato."""
     if pd.isna(val):
         return 0
     val_str = str(val).replace(",", ".").strip()
@@ -120,44 +120,62 @@ def extract_num(val):
     return 0
 
 
-def get_column_by_names(possible_names):
-    """Cerca direttamente la colonna corrispondente a una lista di possibili nomi."""
+def find_column(patterns, exclude_patterns=None):
+    """Cerca la colonna nel dataframe confrontando le stringhe pulite."""
+    if exclude_patterns is None:
+        exclude_patterns = []
+
+    # 1. Match Esatto
     for col in df.columns:
         if col == "RUOLO_CLEAN":
             continue
-        c_clean = col.lower().strip()
-        for target in possible_names:
-            if c_clean == target.lower().strip():
+        col_clean = col.lower().strip()
+        if any(ex in col_clean for ex in exclude_patterns):
+            continue
+        for p in patterns:
+            if col_clean == p.lower().strip():
                 return col
-    # Fallback su ricerca per inclusione se non trova la corrispondenza esatta
+
+    # 2. Match Parziale
     for col in df.columns:
         if col == "RUOLO_CLEAN":
             continue
-        c_clean = col.lower().strip()
-        for target in possible_names:
-            if target.lower().strip() in c_clean:
+        col_clean = col.lower().strip()
+        if any(ex in col_clean for ex in exclude_patterns):
+            continue
+        for p in patterns:
+            if p.lower().strip() in col_clean:
                 return col
+
     return None
 
 
-col_ruolo = get_column_by_names(["ruolo", "r"])
-col_nome = get_column_by_names(["nome", "calciatore", "giocatore", "player"])
-col_squadra = get_column_by_names(["squadra", "club", "team"])
-col_slot = get_column_by_names(["slot"])
+col_ruolo = find_column(["ruolo", "r"])
+col_nome = find_column(["nome", "calciatore", "giocatore", "player"])
+col_squadra = find_column(["squadra", "club", "team"])
+col_slot = find_column(["slot"])
 
-col_p_cons = get_column_by_names(["prezzo consigliato", "p_cons", "p.cons", "consigliato"])
-col_p_max = get_column_by_names(["prezzo massimo", "prezzo max", "p_max", "p.max", "massimo"])
+col_p_cons = find_column(["prezzo consigliato", "p_cons", "p.cons", "consigliato"])
+col_p_max = find_column(["prezzo massimo", "prezzo max", "p_max", "p.max", "massimo"])
 
-col_pres = get_column_by_names(["presenze", "presenz", "pres", "partite", "pg"])
+col_pres = find_column(["presenze", "presenz", "pres", "partite", "pg"])
 
-# Ricerca diretta per Goal e Assist
-col_gol = get_column_by_names(["goal", "gol", "goal fatti", "gol fatti", "gf"])
-col_assist = get_column_by_names(["assist", "ast", "assist fatti"])
+# Gol fatti (esclude i gol subiti)
+col_gol = find_column(
+    ["goal fatti", "gol fatti", "goal", "gol", "gf"],
+    exclude_patterns=["subit", "prezzo", "consigliato", "max", "massimo"],
+)
 
-col_subiti = get_column_by_names(["goal subiti", "gol subiti", "subiti", "gs"])
-col_clean = get_column_by_names(["clean sheet", "cleansheet", "clean", "cs"])
-col_badge = get_column_by_names(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
-col_verdetto = get_column_by_names(["verdetto", "prendi o lascia", "consiglio"])
+# Assist: ricerca mirata ed esplicita per evitare conflitti con prezzi e presenze
+col_assist = find_column(
+    ["assist fatti", "assist", "ast", "ass", "a"],
+    exclude_patterns=["max", "massimo", "prezzo", "consigliato", "presenz", "ruolo"],
+)
+
+col_subiti = find_column(["goal subiti", "gol subiti", "subiti", "gs"])
+col_clean = find_column(["clean sheet", "cleansheet", "clean", "cs"])
+col_badge = find_column(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
+col_verdetto = find_column(["verdetto", "prendi o lascia", "consiglio"])
 
 
 # ==========================================
@@ -236,7 +254,7 @@ if ricerca_nome and not df_filtered.empty:
         p_nome = player[col_nome] if col_nome else "N/A"
         p_ruolo = player["RUOLO_CLEAN"]
         p_squadra = str(player[col_squadra]).strip() if col_squadra and pd.notna(player[col_squadra]) else "N/A"
-        
+
         p_cons = extract_num(player[col_p_cons]) if col_p_cons else 0
         p_max = extract_num(player[col_p_max]) if col_p_max else 0
         p_pres = extract_num(player[col_pres]) if col_pres else 0
@@ -273,16 +291,13 @@ if ricerca_nome and not df_filtered.empty:
                         badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
                         st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
 
-            # Controllo Colonne CSV Riconosciute
-            with st.expander("🛠️ Verifica Mappatura Colonne CSV"):
-                st.write("**Mappatura rilevata:**")
-                st.json({
-                    "Colonna Goal usata": col_gol,
-                    "Colonna Assist usata": col_assist,
-                    "Colonna Prezzo Consigliato usata": col_p_cons,
-                    "Colonna Prezzo Max usata": col_p_max,
+            # Strumento per verificare il nome della colonna assist abbinata
+            with st.expander("🔎 Dettaglio Mappatura Assist e Statistiche"):
+                st.write({
+                    "Colonna Assist identificata": col_assist,
+                    "Valore Assist estratto": p_assist,
+                    "Tutte le colonne nel CSV": list(df.columns),
                 })
-                st.write("**Nomi esatti di tutte le colonne nel file CSV:**", list(df.columns))
 
             st.markdown("---")
 
