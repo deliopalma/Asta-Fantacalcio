@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. CSS PERSONALIZZATO (TEMA GRAFICO & COLORI)
+# 2. CSS PERSONALIZZATO (TEMA GRAFICO DARK & PREMIUM)
 # ==========================================
 st.markdown(
     """
@@ -77,7 +77,7 @@ st.markdown("---")
 
 
 # ==========================================
-# 3. FUNZIONE CARICAMENTO DATI DINAMICA
+# 3. FUNZIONE CARICAMENTO DATI (CON LETTURA SICURA VALORI)
 # ==========================================
 @st.cache_data
 def load_data():
@@ -86,12 +86,12 @@ def load_data():
 
     if not os.path.exists(file_path):
         st.error(
-            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che 'tutti_2027.csv' sia nella cartella 'data/'."
+            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che 'tutti_2027.csv' sia presente nella cartella 'data/'."
         )
         return pd.DataFrame()
 
     try:
-        # Tenta la lettura con utf-8-sig e diversi separatori
+        # Lettura con utf-8-sig e fallback separatore
         try:
             df = pd.read_csv(file_path, encoding="utf-8-sig")
             if df.shape[1] <= 1:
@@ -99,43 +99,76 @@ def load_data():
         except Exception:
             df = pd.read_csv(file_path, sep=";", encoding="latin1")
 
-        # Pulizia intestazioni (rimozione spazi extra)
+        # Pulizia nomi colonne
         df.columns = df.columns.str.strip()
 
-        # Funzione helper per identificare colonne indipendentemente dalla sintassi esatta
-        def find_column(patterns):
-            for col in df.columns:
-                for pattern in patterns:
-                    if pattern.lower() in col.lower():
+        # Funzione helper per identificare le colonne senza rigidezza
+        def get_col_name(candidates):
+            for cand in candidates:
+                for col in df.columns:
+                    if cand.lower() in col.lower():
                         return col
             return None
 
-        # Mappatura e pulizia campi chiave
-        col_ruolo = find_column(["ruolo"])
+        # Rilevamento colonne
+        col_ruolo = get_col_name(["ruolo"])
         if col_ruolo:
             df["RUOLO"] = df[col_ruolo].astype(str).str.strip().str.upper()
 
-        # Pulizia e conversione numerica per tutte le colonne numeriche
+        # Conversione dei campi numerici preservando i dati originali
         for col in df.columns:
-            # Se la colonna contiene dati numerici o statistiche, li convertiamo pulendo eventuali caratteri extra
-            if any(k in col.lower() for k in ["prezzo", "presenz", "goal", "gol", "assist", "clean", "slot"]):
+            if any(
+                k in col.lower()
+                for k in ["prezzo", "presenz", "goal", "gol", "assist", "clean"]
+            ):
+                # Estrae numeri e decimali mantenendo la precisione
                 df[col] = pd.to_numeric(
-                    df[col].astype(str).str.replace(",", ".").str.extract(r"(-?\d+\.?\d*)")[0],
+                    df[col]
+                    .astype(str)
+                    .str.replace(",", ".")
+                    .str.extract(r"(-?\d+\.?\d*)")[0],
                     errors="coerce",
                 ).fillna(0)
 
         return df
 
     except Exception as e:
-        st.error(f"❌ Si è verificato un errore durante la lettura del file CSV: {e}")
+        st.error(
+            f"❌ Si è verificato un errore durante la lettura del file CSV: {e}"
+        )
         return pd.DataFrame()
 
 
 df = load_data()
 
 if df.empty:
-    st.warning("Caricamento dati non riuscito. Controlla il file CSV e riprova.")
+    st.warning(
+        "Caricamento dati non riuscito. Controlla il file CSV nella cartella 'data/' e riprova."
+    )
     st.stop()
+
+# Helper generale per la ricerca delle colonne
+def find_col(keywords):
+    for kw in keywords:
+        for c in df.columns:
+            if kw.lower() in c.lower():
+                return c
+    return None
+
+
+col_ruolo = find_col(["ruolo"])
+col_nome = find_col(["nome calciatore", "nome"])
+col_squadra = find_col(["squadra", "club", "team"])
+col_slot = find_col(["slot"])
+col_p_cons = find_col(["prezzo consigliato", "consigliato"])
+col_p_max = find_col(["prezzo massimo", "massimo"])
+col_pres = find_col(["presenze", "pres"])
+col_gol = find_col(["goal fatti", "gol fatti", "goal", "gol"])
+col_assist = find_col(["assist"])
+col_subiti = find_col(["goal subiti", "gol subiti", "subiti"])
+col_clean = find_col(["clean sheet", "clean"])
+col_badge = find_col(["badge"])
+col_verdetto = find_col(["prendi o lascia", "verdetto"])
 
 # ==========================================
 # 4. SIDEBAR: FILTRI & CONTROLLI
@@ -143,13 +176,16 @@ if df.empty:
 st.sidebar.header("🔍 Filtri Ricerca & Asta")
 
 # 1. Filtro Ruolo
-ruoli_disponibili = ["TUTTI"] + sorted([r for r in df["RUOLO"].unique() if r and r != "NAN"])
+ruoli_disponibili = ["TUTTI"] + sorted(
+    [r for r in df["RUOLO"].unique() if r and r != "NAN"]
+)
 ruolo_selezionato = st.sidebar.selectbox("Seleziona Ruolo", ruoli_disponibili)
 
 # 2. Filtro Squadra
-col_squadra = next((c for c in df.columns if c.lower() in ["squadra", "nome squadra", "club", "team"]), None)
 if col_squadra:
-    squadre = ["TUTTE"] + sorted(list(df[col_squadra].dropna().astype(str).unique()))
+    squadre = ["TUTTE"] + sorted(
+        list(df[col_squadra].dropna().astype(str).unique())
+    )
     squadra_selezionata = st.sidebar.selectbox("Seleziona Squadra", squadre)
 else:
     squadra_selezionata = "TUTTE"
@@ -158,23 +194,30 @@ else:
 ricerca_nome = st.sidebar.text_input("Cerca Calciatore per Nome:", "")
 
 # 4. Filtro Slot
-col_slot = next((c for c in df.columns if "slot" in c.lower()), None)
 if col_slot:
-    slots = ["TUTTI"] + sorted([str(int(s)) if isinstance(s, (int, float)) and s == s else str(s) for s in df[col_slot].unique()])
+    slots = ["TUTTI"] + sorted(
+        [
+            str(int(s)) if isinstance(s, (int, float)) and s == s else str(s)
+            for s in df[col_slot].unique()
+        ]
+    )
     slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots)
 else:
     slot_selezionato = "TUTTI"
 
 # 5. Filtro Verdetto Algoritmo
-col_verdetto = next((c for c in df.columns if "prendi o lascia" in c.lower() or "verdetto" in c.lower()), None)
 if col_verdetto:
-    verdetti = ["TUTTI"] + sorted(list(df[col_verdetto].dropna().astype(str).unique()))
-    verdetto_selezionato = st.sidebar.selectbox("Verdetto Algoritmo 🎲", verdetti)
+    verdetti = ["TUTTI"] + sorted(
+        list(df[col_verdetto].dropna().astype(str).unique())
+    )
+    verdetto_selezionato = st.sidebar.selectbox(
+        "Verdetto Algoritmo 🎲", verdetti
+    )
 else:
     verdetto_selezionato = "TUTTI"
 
 # ==========================================
-# 5. APPLICAZIONE FILTRI AL DATAFRAME
+# 5. APPLICAZIONE FILTRI
 # ==========================================
 df_filtered = df.copy()
 
@@ -182,28 +225,32 @@ if ruolo_selezionato != "TUTTI":
     df_filtered = df_filtered[df_filtered["RUOLO"] == ruolo_selezionato]
 
 if squadra_selezionata != "TUTTE" and col_squadra:
-    df_filtered = df_filtered[df_filtered[col_squadra].astype(str) == squadra_selezionata]
+    df_filtered = df_filtered[
+        df_filtered[col_squadra].astype(str) == squadra_selezionata
+    ]
 
-if ricerca_nome:
-    col_nome = next((c for c in df_filtered.columns if "nome" in c.lower()), None)
-    if col_nome:
-        df_filtered = df_filtered[df_filtered[col_nome].astype(str).str.contains(ricerca_nome, case=False, na=False)]
+if ricerca_nome and col_nome:
+    df_filtered = df_filtered[
+        df_filtered[col_nome]
+        .astype(str)
+        .str.contains(ricerca_nome, case=False, na=False)
+    ]
 
 if slot_selezionato != "TUTTI" and col_slot:
-    df_filtered = df_filtered[df_filtered[col_slot].astype(str) == slot_selezionato]
+    df_filtered = df_filtered[
+        df_filtered[col_slot].astype(str) == slot_selezionato
+    ]
 
 if verdetto_selezionato != "TUTTI" and col_verdetto:
-    df_filtered = df_filtered[df_filtered[col_verdetto].astype(str) == verdetto_selezionato]
+    df_filtered = df_filtered[
+        df_filtered[col_verdetto].astype(str) == verdetto_selezionato
+    ]
 
 # ==========================================
 # 6. METRICHE GENERALI E KPI
 # ==========================================
 st.subheader("📊 Panoramica Rosa & Asta")
 col1, col2, col3, col4 = st.columns(4)
-
-col_p_cons = next((c for c in df.columns if "consigliato" in c.lower()), None)
-col_p_max = next((c for c in df.columns if "massimo" in c.lower()), None)
-col_gol = next((c for c in df.columns if "goal fatti" in c.lower() or "gol fatti" in c.lower() or "goal" in c.lower()), None)
 
 with col1:
     st.metric("Calciatori Filtrati", len(df_filtered))
@@ -223,38 +270,64 @@ with col4:
 st.markdown("---")
 
 # ==========================================
-# 7. VISUALIZZAZIONE TABELLA DINAMICA
+# 7. TABELLA DINAMICA SPECIFICA PER RUOLO
 # ==========================================
 st.subheader("📋 Tabella Calciatori & Consigli Asta")
 
-# Rilevamento automatico di tutte le colonne presenti nel CSV da visualizzare
-col_badge = next((c for c in df.columns if "badge" in c.lower()), None)
-col_clean = next((c for c in df.columns if "clean" in c.lower()), None)
-col_subiti = next((c for c in df.columns if "subit" in c.lower()), None)
-col_assist = next((c for c in df.columns if "assist" in c.lower()), None)
+# Costruzione intelligente delle colonne in base al ruolo selezionato
+cols_base = [col_ruolo, col_nome, col_squadra, col_slot]
+cols_prezzi = [col_p_cons, col_p_max, col_pres]
 
-# Costruzione intelligente delle colonne da mostrare
-cols_to_display = []
-for col_name in df.columns:
-    # Mostriamo tutte le colonne rilevanti mantenendo l'ordine del CSV
-    cols_to_display.append(col_name)
+if ruolo_selezionato == "P":
+    # Esclusivo per i Portieri: solo statistiche difensive
+    cols_stats = [col_subiti, col_clean]
+else:
+    # Per Giocatori di movimento o Vista generale: solo Goal e Assist
+    cols_stats = [col_gol, col_assist]
 
-# Configurazione della visualizzazione delle colonne
+cols_extra = [col_badge, col_verdetto]
+
+# Assemblaggio e rimozione dei None
+cols_to_display = [
+    c
+    for c in (cols_base + cols_prezzi + cols_stats + cols_extra)
+    if c is not None and c in df_filtered.columns
+]
+
+# Configurazione formattazione elegante delle colonne
 column_configuration = {}
-for col in cols_to_display:
-    col_lower = col.lower()
-    if "consigliato" in col_lower or "massimo" in col_lower:
-        column_configuration[col] = st.column_config.NumberColumn(col, format="%d cr")
-    elif "goal fatti" in col_lower or "gol fatti" in col_lower:
-        column_configuration[col] = st.column_config.NumberColumn(col, format="%d ⚽")
-    elif "assist" in col_lower:
-        column_configuration[col] = st.column_config.NumberColumn(col, format="%d 🅰️")
-    elif "subiti" in col_lower:
-        column_configuration[col] = st.column_config.NumberColumn(col, format="%d 🥊")
-    elif "clean" in col_lower:
-        column_configuration[col] = st.column_config.NumberColumn(col, format="%d 🧤")
-    elif "badge" in col_lower:
-        column_configuration[col] = st.column_config.TextColumn("Badge 🎖️")
+if col_ruolo in cols_to_display:
+    column_configuration[col_ruolo] = st.column_config.TextColumn("Ruolo")
+if col_p_cons in cols_to_display:
+    column_configuration[col_p_cons] = st.column_config.NumberColumn(
+        "Consigliato", format="%d cr"
+    )
+if col_p_max in cols_to_display:
+    column_configuration[col_p_max] = st.column_config.NumberColumn(
+        "Massimo", format="%d cr"
+    )
+if col_pres in cols_to_display:
+    column_configuration[col_pres] = st.column_config.NumberColumn(
+        "Presenze", format="%d"
+    )
+if col_gol in cols_to_display:
+    column_configuration[col_gol] = st.column_config.NumberColumn(
+        "Gol ⚽", format="%d"
+    )
+if col_assist in cols_to_display:
+    column_configuration[col_assist] = st.column_config.NumberColumn(
+        "Assist 🅰️", format="%d"
+    )
+if col_subiti in cols_to_display:
+    column_configuration[col_subiti] = st.column_config.NumberColumn(
+        "Gol Subiti 🥊", format="%d"
+    )
+if col_clean in cols_to_display:
+    column_configuration[col_clean] = st.column_config.NumberColumn(
+        "Clean Sheet 🧤", format="%d"
+    )
+if col_badge in cols_to_display:
+    column_configuration[col_badge] = st.column_config.TextColumn("Badge")
 
 st.dataframe(
     df_filtered[cols_to_display],
@@ -265,4 +338,6 @@ st.dataframe(
 
 # Footer
 st.markdown("---")
-st.caption("FantaBooster® Engine v3.5 | Sviluppato per Asta Fantacalcio 2026/2027")
+st.caption(
+    "FantaBooster® Engine v3.5 | Sviluppato per Asta Fantacalcio 2026/2027"
+)
