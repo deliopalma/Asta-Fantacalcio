@@ -1,0 +1,333 @@
+﻿RUOLO;NOME;SQUADRA;SLOT;Prezzo consigliato;Prezzo Massimo;Presenze;Goal subiti;Clean Sheet;Badge;Prendi o lascia? 🎲
+P;Svilar;Roma;Super top;70;150;38;31;18;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Gollini;Roma;2° portiere;1;;;;;;2° portiere
+P;De Marzi ;Roma;3° portiere;1;;;;;;3° portiere
+P;Butez;Como;Super top;67;130;38;29;19;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Sanchez Ro.;Como;2° portiere;1;;;;;;2° portiere
+P;Vigorito;Como;3° portiere;1;;;;;;3° portiere
+P;Maignan;Milan;Top;54;100;37;35;14;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Terracciano;Milan;2° portiere;1;;;;;;2° portiere
+P;Torriani;Milan;3° portiere;1;;;;;;3° portiere
+P;Meret;Napoli;Top;48;90;11;12;4;;Titolare/Ballottaggio
+P;Milinkovic-Savic V.;Napoli;Top;17;21;27;24;11;⚽💪 Cleansheeter;Titolare/Ballottaggio
+P;Contini;Napoli;3° portiere;1;;;;;;3° portiere
+P;Carnesecchi;Atalanta;Super top;65;130;37;35;13;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Sportiello;Atalanta;2° portiere;1;;;;;;2° portiere
+P;Pompei;Atalanta;3° portiere;1;;;;;;3° portiere
+P;Martinez Jo.;Inter;Top;64;130;5;4;3;⚽💪 Cleansheeter;Titolare/Ballottaggio
+P;Provedel;Inter;Top;12;15;27;27;12;⚽💪 Cleansheeter;Titolare/Ballottaggio
+P;Di Gennaro;Inter;3° portiere;1;;;;;;3° portiere
+P;Okoye;Udinese;Buon Titolare;37;46;30;32;10;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Mrzoek;Udinese;2° portiere;1;;;;;;Titolare/Ballottaggio
+P;Piana;Udinese;3° portiere;1;;;;;;3° portiere
+P;Falcone;Lecce;Titolare;30;38;38;50;10;⚽💪 Cleansheeter;PROVA A PRENDERLO
+P;Penev;Lecce;2° portiere;1;;;;;;2° portiere
+P;Bleve;Lecce;3° portiere;1;;;;;;3° portiere
+P;Vicario;Juventus;Top;60;120;31;50;7;⚽💪 Cleansheeter;Titolare
+P;Grabara;Juventus;2° portiere;1;;;;;;2° portiere
+P;Pinsoglio;Juventus;3° portiere;1;;;;;;3° portiere
+P;De Gea;Fiorentina;Top;51;95;24;49;10;⚽💪 Cleansheeter;Titolare/Ballottaggio
+P;Christensen O.;Fiorentina;2° portiere;1;;13;;;;Titolare/Ballottaggio
+P;Lezzerini;Fiorentina;3° portiere;1;;;;;;3° portiere
+P;Skorupski;Bologna;Buon Titolare;45;56;19;15;8;;Titolare/Ballottaggio
+P;Pessina;Bologna;2° portiere;1;;;;;;Titolare/Ballottaggio
+P;Happonen;Bologna;3° portiere;1;;;;;;3° portiere
+P;Caprile;Cagliari;Buon Titolare;42;52;38;53;8;;Titolare
+P;Radunovic;Cagliari;2° portiere;1;;;;;;2° portiere
+P;Sherri;Cagliari;3° portiere;1;;;;;;3° portiere
+P;Mandas;Lazio;Scommessa;40;50;0;0;0;;Titolare
+P;Motta;Lazio;2° portiere;1;;;;;;2° portiere
+P;Renzetti;Lazio;3° portiere;1;;;;;;3° portiere
+P;Corvi;Parma;Titolare;10;12;17;18;7;;PROVA A PRENDERLO
+P;Daffara;Parma;2° portiere;1;;;;;;2° portiere
+P;Ghidotti;Parma;3° portiere;1;;;;;;3° portiere
+P;Perri;Torino;Titolare;35;44;16;29;3;;PROVA A PRENDERLO
+P;Mascardi;Torino;2° portiere;1;;;;;;2° portiere
+P;Siviero;Torino;3° portiere;1;;;;;;3° portiere
+P;Bijlow;Genoa;Titolare;32;40;16;20;5;;Titolare
+P;Stolz;Genoa;2° portiere;1;;;;;;2° portiere
+P;Sommariva;Genoa;3° portiere;1;;;;;;3° portiere
+P;Muric;Sassuolo;Titolare;25;31;32;43;6;;Titolare
+P;Turati;Sassuolo;2° portiere;1;;;;;;2° portiere
+P;Satalino;Sassuolo;3° portiere;1;;;;;;3° portiere
+P;Stankovic F.;Venezia;Titolare;21;26;38;31;16;;PROVA A PRENDERLO
+P;Monitpò;Venezia;2° portiere;1;;;;;;2° portiere
+P;Grandi;Venezia;3° portiere;1;;;;;;3° portiere
+P;Palmisani;Frosinone;Titolare;19;24;38;34;15;;Titolare
+P;Desplanches;Frosinone;2° portiere;1;;;;;;2° portiere
+P;Lolic;Frosinone;3° portiere;1;;;;;;3° portiere
+P;Thiam;Monza;Titolare;15;19;38;32;16;;Titolare/Ballottaggio
+P;Tornqvist;Monza;2° portiere;1;;;;;;2° portiere
+P;Strajnar;Monza;3° portiere;1;;;;;;3° portiere
+RUOLO;NOME;SQUADRA;SLOT;Prezzo consigliato;Prezzo Massimo;Presenze;Goal;Assist;Badge;Prendi o lascia? 🎲
+D;Dimarco;Inter;Slot 1 (Super Top);64;180;35;7;16;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PROVA A PRENDERLO
+D;Wesley;Roma;Slot 1 (Super Top);63;130;30;5;0;🏋️‍♂️ Stakanovista | 🟨 Cittone | 🟥 Macellaio;PROVA A PRENDERLO
+D;Molina N.;Roma;Slot 1 (Super Top);62;78;26;2;2;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Bremer;Juventus;Slot 1 (Super Top);60;75;26;4;3;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Mancini;Roma;Slot 1 (Super Top);59;74;36;4;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Akanji;Inter;Slot 1 (Super Top);58;72;33;2;0;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Rrahmani;Napoli;Slot 1 (Super Top);56;70;21;2;1;-;LASCIALO AGLI ALTRI
+D;Chalobah T.;Como;Slot 2 (Top Player);56;70;34;3;0;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Bastoni;Inter;Slot 2 (Top Player);55;69;28;1;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Kalulu;Juventus;Slot 2 (Top Player);54;68;37;2;4;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Pavlovic;Milan;Slot 2 (Top Player);52;65;34;5;1;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Gila;Milan;Slot 2 (Top Player);51;64;31;0;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;N'Dicka;Roma;Slot 2 (Top Player);50;62;31;3;0;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Solet;Udinese;Slot 2 (Top Player);49;61;35;3;1;🏋️‍♂️ Stakanovista | 🎯 Vicerigorista;PRENDILO SENZA ESAGERARE
+D;Bisseck;Inter;Slot 2 (Top Player);47;59;23;3;1;-;PRENDILO SENZA ESAGERARE
+D;Stones;Inter;Slot 2 (Top Player);46;58;9;0;0;-;PRENDILO SENZA ESAGERARE
+D;Di Lorenzo;Napoli;Slot 2 (Top Player);45;56;26;2;1;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Ostigard;Genoa;Slot 2 (Top Player);44;55;30;5;1;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Hermoso;Roma;Slot 2 (Top Player);43;54;27;3;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Spence;Inter;Slot 2 (Top Player);42;52;30;0;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Scalvini;Atalanta;Slot 3-4 (Semititolare);40;50;24;3;1;-;PRENDILO SENZA ESAGERARE
+D;Ramon;Como;Slot 3-4 (Semititolare);39;49;32;2;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;PROVA A PRENDERLO
+D;Dodò;Fiorentina;Slot 3-4 (Semititolare);37;46;36;1;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Vasquez;Genoa;Slot 3-4 (Semititolare);36;45;36;1;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Vojvoda;Udinese;Slot 3-4 (Semititolare);35;44;30;2;2;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Kamara H.;Udinese;Slot 3-4 (Semititolare);34;42;26;0;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Zappacosta;Atalanta;Slot 3-4 (Semititolare);33;41;35;3;3;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Miranda J.;Bologna;Slot 3-4 (Semititolare);32;40;32;1;3;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+D;Celik;Juventus;Slot 3-4 (Semititolare);31;39;34;1;2;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Cambiaso;Juventus;Slot 3-4 (Semititolare);30;38;36;3;4;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+D;Doekhi;Lazio;Slot 3-4 (Semititolare);29;36;34;5;0;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Tiago Gabriel;Lecce;Slot 3-4 (Semititolare);28;35;37;2;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Bartesaghi;Milan;Slot 3-4 (Semititolare);28;35;31;2;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Spinazzola;Napoli;Slot 3-4 (Semititolare);27;34;32;3;3;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Delprato;Parma;Slot 3-4 (Semititolare);26;32;35;2;0;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Valeri;Parma;Slot 3-4 (Semititolare);25;31;34;0;2;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista;RIEMPI SLOT
+D;Koulierakis;Roma;Slot 3-4 (Semititolare);24;30;29;4;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Comuzzo;Torino;Slot 3-4 (Semititolare);23;29;27;1;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Couto;Como;Slot 5-6 (Titolare);22;28;19;2;2;-;PROVA A PRENDERLO
+D;Theate;Bologna;Slot 5-6 (Titolare);22;28;24;1;0;🟨 Cittone;LASCIALO AGLI ALTRI
+D;Diego Carlos;Parma;Slot 5-6 (Titolare);21;26;27;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+D;Hien;Atalanta;Slot 5-6 (Titolare);20;25;28;1;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Lucumì;Juventus;Slot 5-6 (Titolare);19;24;29;1;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Zortea;Bologna;Slot 5-6 (Titolare);19;24;32;0;2;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Mina;Cagliari;Slot 5-6 (Titolare);18;22;26;2;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Obert;Cagliari;Slot 5-6 (Titolare);17;21;35;0;3;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Dragusin;Fiorentina;Slot 5-6 (Titolare);17;21;10;0;0;-;RIEMPI SLOT
+D;Jimenez A.;Fiorentina;Slot 5-6 (Titolare);16;20;31;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+D;Bracaglia;Frosinone;Slot 5-6 (Titolare);15;19;32;5;1;🏋️‍♂️ Stakanovista | 🟨 Cittone;PROVA A PRENDERLO
+D;Tavares N.;Lazio;Slot 5-6 (Titolare);15;19;23;0;0;-;SCOMMESSA
+D;Gabbia;Milan;Slot 5-6 (Titolare);14;18;30;0;0;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Mangas;Monza;Slot 5-6 (Titolare);13;16;15;2;1;-;SCOMMESSA
+D;Idzes;Sassuolo;Slot 5-6 (Titolare);13;16;35;0;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Coco;Torino;Slot 5-6 (Titolare);12;15;35;1;1;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Badiashile;Napoli;Slot 5-6 (Titolare);11;14;8;0;0;-;LASCIALO AGLI ALTRI
+D;Sutalo J.;Lazio;Slot 5-6 (Titolare);11;14;24;0;0;-;LASCIALO AGLI ALTRI
+D;Belghali;Torino;Slot 5-6 (Titolare);10;12;26;2;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;SCOMMESSA
+D;Kolasinac;Atalanta;Slot 5-6 (Titolare);9;11;19;0;0;-;LASCIALO AGLI ALTRI
+D;Bellanova;Atalanta;Slot 5-6 (Titolare);9;11;24;0;1;-;LASCIALO AGLI ALTRI
+D;Bernasconi;Atalanta;Slot 5-6 (Titolare);9;11;23;0;3;-;LASCIALO AGLI ALTRI
+D;Heggem;Bologna;Slot 5-6 (Titolare);8;10;27;0;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Holm;Bologna;Slot 5-6 (Titolare);8;10;11;1;4;-;LASCIALO AGLI ALTRI
+D;Kaiki;Como;Slot 5-6 (Titolare);7;9;16;0;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;SCOMMESSA
+D;Valle;Como;Slot 5-6 (Titolare);7;9;28;1;4;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Hainaut;Venezia;Slot 5-6 (Titolare);6;9;37;5;6;;PROVA A PRENDERLO
+D;Haps;Venezia;Slot 5-6 (Titolare);6;9;25;5;5;🟨 Cittone;SCOMMESSA
+D;Viery;Fiorentina;Slot 5-6 (Titolare);6;8;13;1;0;🟨 Cittone;LASCIALO AGLI ALTRI
+D;Monterisi;Frosinone;Slot 5-6 (Titolare);6;8;25;2;5;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Oyono Anthony;Frosinone;Slot 7-8 (Low Cost);6;8;34;1;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Marcandalli;Genoa;Slot 7-8 (Low Cost);5;6;32;0;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Pavard;Inter;Slot 7-8 (Low Cost);5;6;28;1;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+D;Carlos Augusto;Inter;Slot 7-8 (Low Cost);4;5;34;1;1;🏋️‍♂️ Stakanovista | 🟨 Cittone;PROVA A PRENDERLO
+D;Pedraza;Lazio;Slot 7-8 (Low Cost);4;5;27;1;3;🏋️‍♂️ Stakanovista | 🟨 Cittone;SCOMMESSA
+D;Marusic;Lazio;Slot 7-8 (Low Cost);4;5;33;1;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Veiga D.;Lecce;Slot 7-8 (Low Cost);4;5;36;0;1;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Gallo;Lecce;Slot 7-8 (Low Cost);3;4;37;0;4;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Tomori;Milan;Slot 7-8 (Low Cost);3;4;33;0;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;Beukema;Napoli;Slot 7-8 (Low Cost);3;4;24;2;0;-;LASCIALO AGLI ALTRI
+D;Buongiorno;Napoli;Slot 7-8 (Low Cost);2;2;33;0;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Kristensen T.;Atalanta;Slot 7-8 (Low Cost);2;2;28;3;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Obrador;Sassuolo;Slot 7-8 (Low Cost);2;2;16;1;3;-;SCOMMESSA
+D;Fortini;Torino;Slot 7-8 (Low Cost);2;2;16;0;0;-;SCOMMESSA
+D;Cacciamani;Torino;Slot 7-8 (Low Cost);2;2;33;2;0;-;SCOMMESSA
+D;Leysen F.;Sassuolo;Slot 7-8 (Low Cost);2;2;23;1;1;-;LASCIALO AGLI ALTRI
+D;Balerdi;Roma;Slot 7-8 (Low Cost);1;1;26;0;1;-;LASCIALO AGLI ALTRI
+D;Caleta-Car;Sassuolo;Slot 7-8 (Low Cost);1;1;27;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+D;Sugawara;Cagliari;Slot 7-8 (Low Cost);1;1;31;0;6;🏋️‍♂️ Stakanovista;SCOMMESSA
+D;Kofler;Cagliari;Slot 7-8 (Low Cost);1;1;28;3;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+D;Zè Pedro;Cagliari;Slot 7-8 (Low Cost);1;1;23;0;1;🟨 Cittone;LASCIALO AGLI ALTRI
+D;Kempf;Como;Slot 7-8 (Low Cost);1;1;34;4;1;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+D;Valdepenas;Fiorentina;Slot 7-8 (Low Cost);1;1;30;2;1;🏋️‍♂️ Stakanovista;SCOMMESSA
+D;Calvani;Frosinone;Slot 7-8 (Low Cost);1;1;35;1;1;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Kelly L.;Juventus;Slot 7-8 (Low Cost);1;1;35;1;1;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+D;Gaspar K.;Lecce;Slot 7-8 (Low Cost);1;1;37;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;RIEMPI SLOT
+D;De Winter;Milan;Slot 7-8 (Low Cost);1;1;26;1;1;🏋️‍♂️ Stakanovista;SCOMMESSA
+D;Olivera;Napoli;Slot 7-8 (Low Cost);1;1;25;0;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Ghilardi;Roma;Slot 7-8 (Low Cost);1;1;23;0;0;-;SCOMMESSA
+D;Cinquegrano;Sassuolo;Slot 7-8 (Low Cost);1;1;34;2;1;🟨 Cittone;PROVA A PRENDERLO
+D;Doig;Sassuolo;Slot 7-8 (Low Cost);1;1;30;0;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+D;Lulli;Roma;Slot 7-8 (Low Cost);1;1;27;2;8;;PROVA A PRENDERLO
+C;Paz Nico;Como;Slot 1 (Super Top);157;220;35;12;6;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Calci Piazzati ;PROVA A PRENDERLO
+C;Calhanoglu;Inter;Slot 1 (Super Top);153;200;22;9;4;🎯 Rigorista | 🎯 Calci piazzati | 🟨 Cittone;PROVA A PRENDERLO
+C;Baturina;Como;Slot 1 (Super Top);145;170;29;6;3;🏋️‍♂️ Stakanovista;O LUI O NICO PAZ
+C;Orsolini;Bologna;Slot 1 (Top Player);144;160;35;10;1;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista | 🎯 Calci piazzati | ⛑️Infortunato rientra a ottobre;PROVA A PRENDERLO
+C;Pulisic;Milan;Slot 1 (Top Player);140;165;30;8;4;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;PROVA A PRENDERLO
+C;Rabiot;Milan;Slot 1 (Top Player);136;165;29;6;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+C;De Bruyne;Napoli;Slot 1 (Top Player);135;150;18;5;2;🎯 Rigorista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;McTominay;Napoli;Slot 1 (Top Player);130;135;33;10;3;🏋️‍♂️ Stakanovista | ⚽ Bomber | ⛑️Infortunato rientra a novembre;PROVA A PRENDERLO
+C;Mora;Roma;Slot 2 (Top Player);128;130;28;1;1;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Da Cunha;Como;Slot 2 (Top Player);100;120;36;6;4;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Zielinski;Inter;Slot 2 (Top Player);100;120;34;6;3;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Conceicao;Juventus;Slot 2 (Top Player);90;100;31;3;5;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;McKennie;Juventus;Slot 2 (Top Player);90;100;36;5;5;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Atta;Fiorentina;Slot 2 (Top Player);90;100;32;5;3;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Gudmundsson A.;Lazio;Slot 3-4 (Buon titolare);90;100;32;5;3;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Modric;Milan;Slot 3-4 (Buon titolare);80;90;34;2;3;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;LASCIALO AGLI ALTRI
+C;Barella;Inter;Slot 3-4 (Buon titolare);80;95;34;3;8;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+C;Taylor K.;Lazio;Slot 3-4 (Buon titolare);80;95;17;3;2;-;LASCIALO AGLI ALTRI
+C;Frattesi;Lazio;Slot 3-4 (Buon titolare);70;87;22;0;0;-;PROVA A PRENDERLO
+C;Ekkelenkamp;Udinese;Slot 3-4 (Buon titolare);70;86;31;5;3;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PROVA A PRENDERLO
+C;Zaniolo;Udinese;Slot 3-4 (Buon titolare);73;85;32;5;6;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati|🟨 Cittone | ⛑️Infortunato rientra a ottobre;LASCIALO AGLI ALTRI
+C;Zaccagni;Lazio;Slot 3-4 (Buon titolare);72;84;26;3;0;🏋️‍♂️ Stakanovista | 🎯Rigorista |🎯 Calci piazzati |🟨 Cittone;PRENDILO SENZA ESAGERARE
+C;Samardzic;Atalanta;Slot 3-4 (Buon titolare);71;83;26;2;1;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Vlasic;Torino;Slot 3-4 (Buon titolare);70;82;37;8;3;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;PRENDILO SENZA ESAGERARE
+C;Ederson D.S.;Atalanta;Slot 3-4 (Semititolare);69;81;30;2;1;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Jones C.;Inter;Slot 3-4 (Semititolare);68;80;34;1;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Gonzalez N.;Juventus;Slot 3-4 (Semititolare);67;79;25;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+C;Kessiè;Atalanta;Slot 3-4 (Semititolare);66;78;26;5;3;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Goncalves P.;Fiorentina;Slot 3-4 (Semititolare);65;77;9;0;0;-;LASCIALO AGLI ALTRI
+C;Rodriguez Je.;Como;Slot 3-4 (Semititolare);62;76;31;2;9;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Baldanzi;Genoa;Slot 3-4 (Semititolare);60;75;8;0;2;🎯 Calci piazzati;LASCIALO AGLI ALTRI
+C;Alajbegovic;Juventus;Slot 3-4 (Semititolare);58;72;28;9;3;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Saelemaekers;Milan;Slot 3-4 (Semititolare);55;69;35;3;3;🏋️‍♂️ Stakanovista;PRENDILO SENZA ESAGERARE
+C;Mastantuono;Fiorentina;Slot 3-4 (Semititolare);53;66;23;1;0;🎯 Calci piazzati;LASCIALO AGLI ALTRI
+C;Moreira;Milan;Slot 3-4 (Semititolare);51;64;27;4;6;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Bernardeschi;Bologna;Slot 3-4 (Semititolare);49;61;29;4;2;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;PROVA A PRENDERLO
+C;Rowe;Atalanta;Slot 3-4 (Semititolare);47;59;28;3;2;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Perrone;Como;Slot 3-4 (Semititolare);45;56;36;3;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;PROVA A PRENDERLO
+C;Zambo Anguissa;Napoli;Slot 5-6 (Titolare);41;51;18;4;1;-;PROVA A PRENDERLO
+C;Vergara;Napoli;Slot 5-6 (Titolare);39;49;12;1;2;-;SCOMMESSA
+C;Konè M.;Roma;Slot 5-6 (Titolare);37;46;29;2;3;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+C;Thorstvedt;Sassuolo;Slot 5-6 (Titolare);36;45;32;4;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;PROVA A PRENDERLO
+C;Douglas Luiz;Juventus;Slot 5-6 (Titolare);35;43;34;1;2;🎯 Rigorista | 🟨 Cittone;SCOMMESSA
+C;Diouf;Inter;Slot 5-6 (Titolare);34;42;19;1;0;-;LASCIALO AGLI ALTRI
+C;Sucic P.;Inter;Slot 5-6 (Titolare);32;40;34;2;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Locatelli;Juventus;Slot 5-6 (Titolare);31;39;36;1;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+C;Thuram K.;Juventus;Slot 5-6 (Titolare);29;36;35;3;3;🏋️‍♂️ Stakanovista | INFORTUNATO;INFORTUNATO
+C;Cancellieri;Lazio;Slot 5-6 (Titolare);28;35;30;4;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;SCOMMESSA
+C;Isaksen;Lazio;Slot 5-6 (Titolare);26;32;30;5;1;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Colpani;Monza;Slot 5-6 (Titolare);25;31;25;2;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Politano;Napoli;Slot 5-6 (Titolare);24;30;34;2;5;🏋️‍♂️ Stakanovista | 🎯 Calci Piazzati;PRENDILO A POCO
+C;Cristante;Roma;Slot 5-6 (Titolare);22;28;37;2;1;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO A POCO
+C;Volpato;Sassuolo;Slot 5-6 (Titolare);21;26;24;2;4;-;PROVA A PRENDERLO
+C;Casadei;Torino;Slot 5-6 (Titolare);20;25;33;6;0;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+C;Pellegrini Lo.;Roma;Slot 5-6 (Titolare);19;24;24;4;2;-;LASCIALO AGLI ALTRI
+C;Pasalic;Atalanta;Slot 5-6 (Titolare);18;22;33;3;4;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Odgaard;Bologna;Slot 5-6 (Titolare);17;21;26;5;1;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Cambiaghi;Bologna;Slot 5-6 (Titolare);16;20;28;3;4;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Mandragora;Torino;Slot 5-6 (Titolare);15;19;34;7;3;🏋️‍♂️ Stakanovista | 🟨 Cittone | 🎯 Calci piazzati;PRENDILO A POCO
+C;Calò;Frosinone;Slot 5-6 (Titolare);14;18;37;10;15;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista | 🎯 Calci piazzati |🟨 Cittone;PRENDILO A POCO
+C;Chukwueze;Milan;Slot 5-6 (Titolare);13;16;23;3;4;-;PRENDILO A POCO
+C;Busio;Venezia;Slot 5-6 (Titolare);13;15;37;7;4;🏋️‍♂️ Stakanovista |🎯 Rigorista | 🎯 Calci piazzati | 🟨 Cittone;PRENDILO A POCO
+C;Lobotka;Napoli;Slot 5-6 (Titolare);12;15;32;1;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Konè I.;Sassuolo;Slot 5-6 (Titolare);11;14;35;6;0;🏋️‍♂️ Stakanovista | Infortunato;INFORTUNATO
+C;Schmid;Frosinone;Slot 5-6 (Titolare);10;12;34;4;8;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;PRENDILO A POCO
+C;Hutchinson;Milan;Slot 5-6 (Titolare);10;12;31;1;5;🏋️‍♂️ Stakanovista;SCOMMESSA
+C;Perez;Venezia;Slot 5-6 (Titolare);10;12;35;3;8;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO A POCO
+C;Mbangula;Bologna;Slot 5-6 (Titolare);9;11;26;3;2;🏋️‍♂️ Stakanovista;SCOMMESSA
+C;Gaetano;Atalanta;Slot 5-6 (Titolare);8;10;33;2;4;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Zalewski;Atalanta;Slot 5-6 (Titolare);8;10;33;2;4;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Ferguson;Bologna;Slot 7-8 (Low Cost);7;9;27;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+C;Adopo;Cagliari;Slot 7-8 (Low Cost);6;8;38;1;2;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+C;Fabbian;Parma;Slot 7-8 (Low Cost);6;8;29;2;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+C;Romano;Cagliari;Slot 7-8 (Low Cost);6;8;28;0;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Fagioli;Fiorentina;Slot 7-8 (Low Cost);5;6;33;2;3;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Ndour;Fiorentina;Slot 7-8 (Low Cost);5;6;33;3;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Frendrup;Genoa;Slot 7-8 (Low Cost);4;5;36;1;0;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+C;Koopmeiners;Juventus;Slot 7-8 (Low Cost);4;5;33;0;0;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Rovella;Lazio;Slot 7-8 (Low Cost);4;5;11;0;1;⛑️Infortunato rientra a novembre;INFORTUNATO
+C;Coulibaly L.;Lecce;Slot 7-8 (Low Cost);3;4;33;3;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Akinsanmiro;Monza;Slot 7-8 (Low Cost);3;4;24;0;1;-;LASCIALO AGLI ALTRI
+C;Bernabè;Parma;Slot 7-8 (Low Cost);3;4;32;3;1;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PRENDILO A POCO
+C;Pisilli;Roma;Slot 7-8 (Low Cost);2;2;25;2;4;🏋️‍♂️ Stakanovista;SCOMMESSA
+C;Karlstrom;Udinese;Slot 7-8 (Low Cost);2;2;36;1;0;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+C;Unai Gomez;Udinese;Slot 7-8 (Low Cost);2;2;26;1;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Sow;Genoa;Slot 7-8 (Low Cost);1;1;33;5;4;🏋️‍♂️ Stakanovista | 🟨 Cittone;PRENDILO A POCO
+C;Elmas;Atalanta;Slot 7-8 (Low Cost);1;1;33;1;3;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+C;Monteiro J.;Lecce;Slot 7-8 (Low Cost);1;1;31;4;3;-;LASCIALO AGLI ALTRI
+C;Sarr P.;Juventus;Slot 7-8 (Low Cost);1;1;34;0;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;El Shaarawy;Genoa;Slot 7-8 (Low Cost);1;1;20;1;2;-;LASCIALO AGLI ALTRI
+C;Pobega;Bologna;Slot 7-8 (Low Cost);1;1;26;3;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Winks;Cagliari;Slot 7-8 (Low Cost);1;1;34;1;2;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+C;Fazzini;Cagliari;Slot 7-8 (Low Cost);1;1;20;0;0;🎯 Calci piazzati;LASCIALO AGLI ALTRI
+C;Milla;Como;Slot 7-8 (Low Cost);1;1;37;1;10;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+C;Caqueret;Como;Slot 7-8 (Low Cost);1;1;30;2;6;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+C;Liberali;Como;Slot 7-8 (Low Cost);1;1;24;3;3;-;LASCIALO AGLI ALTRI
+C;Oulai;Fiorentina;Slot 7-8 (Low Cost);1;1;25;2;4;-;LASCIALO AGLI ALTRI
+C;Zerbin;Frosinone;Slot 7-8 (Low Cost);1;1;32;0;3;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Ellertsson;Genoa;Slot 7-8 (Low Cost);1;1;36;1;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+C;Zhegrova;Juventus;Slot 7-8 (Low Cost);1;1;19;0;0;-;LASCIALO AGLI ALTRI
+A;Malen;Roma;Slot 1 (Super Top);281;351;18;14;2;🏋️‍♂️ Stakanovista |⚽ Bomber | 🎯 Rigorista;PROVA A PRENDERLO
+A;Martinez L.;Inter;Slot 1 (Super Top);268;335;30;17;6;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista;PROVA A PRENDERLO
+A;Thuram;Inter;Slot 1 (Super Top);256;320;29;13;6;🏋️‍♂️ Stakanovista | ⚽ Bomber;PROVA A PRENDERLO
+A;Hojlund;Napoli;Slot 1 (Top Player);244;305;33;12;5;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Vice rigorista;PROVA A PRENDERLO
+A;Ramos G.;Milan;Slot 1 (Top Player);232;290;30;6;1;🏋️‍♂️ Stakanovista  | 🎯 Rigorista ;LASCIALO AGLI ALTRI
+A;Davis K.;Udinese;Slot 1 (Top Player);152;190;30;10;4;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista;PROVA A PRENDERLO
+A;Kolo Muani;Juventus;Slot 2 (Top Player);221;276;30;1;1;🏋️‍♂️ Stakanovista | 🎯 Rigorista;LASCIALO AGLI ALTRI
+A;Kean;Como;Slot 2 (Top Player);210;262;26;8;1;🏋️‍♂️ Stakanovista | 🎯 Vice Rigorista ;PRENDILO SENZA ESAGERARE
+A;Woltemade;Juventus;Slot 2 (Top Player);199;249;33;8;3;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Douvikas;Como;Slot 2 (Top Player);189;236;38;14;1;🏋️‍♂️ Stakanovista | ⚽ Bomber;PRENDILO SENZA ESAGERARE
+A;Scamacca;Atalanta;Slot 2 (Top Player);170;212;24;10;1;⚽ Bomber | 🎯 Rigorista ;LASCIALO AGLI ALTRI
+A;Krstovic;Atalanta;Slot 2 (Top Player);144;180;33;10;5;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista  ;PRENDILO SENZA ESAGERARE
+A;De Ketelaere;Atalanta;Slot 3-4 (Titolare);136;170;31;3;5;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;LASCIALO AGLI ALTRI
+A;Berardi;Sassuolo;Slot 3-4 (Titolare);130;165;26;8;4;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PROVA A PRENDERLO
+A;Esposito F.P.;Inter;Slot 3-4 (Semititolare);128;160;35;7;3;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+A;Yildiz;Juventus;Slot 2 (Top Player);121;151;36;10;6;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Calci Piazzati |⛑️Infortunato rientra a dicembre;PROVA A PRENDERLO
+A;Dybala;Roma;Slot 3-4 (Semititolare);121;151;22;2;6;🎯Vice rigorista | 🎯Calci piazzati;LASCIALO AGLI ALTRI
+A;Dovbyk;Bologna;Slot 3-4 (Semititolare);114;142;14;3;1;🎯Vice rigorista ;PRENDILO SENZA ESAGERARE
+A;Laurientè;Sassuolo;Slot 3-4 (Titolare);107;134;38;7;9;🏋️‍♂️ Stakanovista | 🎯 Calci piazzati;PROVA A PRENDERLO
+A;Raspadori;Atalanta;Slot 3-4 (Semititolare);100;125;13;3;1;-;LASCIALO AGLI ALTRI
+A;Santos A.;Napoli;Slot 3-4 (Semititolare);94;118;14;4;0;-;PRENDILO SENZA ESAGERARE
+A;Pellegrino M.;Fiorentina;Slot 3-4 (Semititolare);88;110;37;9;1;🏋️‍♂️ Stakanovista  | 🎯 Rigorista |;O LUI O BETO
+A;Castro S.;Roma;Slot 3-4 (Semititolare);83;104;35;7;2;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Simeone;Torino;Slot 3-4 (Semititolare);77;96;32;11;0;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Vice rigorista;PROVA A PRENDERLO
+A;Beto;Fiorentina;Slot 3-4 (Semititolare);72;90;37;9;1;🏋️‍♂️ Stakanovista;O LUI O PELLEGRINO
+A;Soulè;Roma;Slot 3-4 (Semititolare);67;84;33;6;5;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+A;Raimondo;Frosinone;Slot 3-4 (Titolare);65;75;36;11;1;🏋️‍♂️ Stakanovista | ⚽ Bomber;PROVA A PRENDERLO
+A;Diao;Como;Slot 3-4 (Semititolare);58;72;17;2;1;-;PRENDILO SENZA ESAGERARE
+A;Pinamonti;Lazio;Slot 5-6 (Titolare);54;68;36;9;3;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista;PROVA A PRENDERLO
+A;Kevin Carlos;Cagliari;Slot 5-6 (Titolare);50;62;23;0;1;🎯 Rigorista;LASCIALO AGLI ALTRI
+A;Colombo;Genoa;Slot 5-6 (Titolare);46;58;38;7;1;🏋️‍♂️ Stakanovista | 🎯 Rigorista;RIEMPI SLOT
+A;Adams Che;Torino;Slot 5-6 (Semititolare);39;49;32;10;3;🏋️‍♂️ Stakanovista;PROVA A PRENDERLO
+A;Tourè El Bilal;Parma;Slot 5-6 (Titolare);36;45;22;5;5;🏋️‍♂️ Stakanovista | 🎯 Rigorista | 🎯 Calci piazzati;LASCIALO AGLI ALTRI
+A;Romero D.;Parma;Slot 5-6 (Titolare);33;41;23;4;1;🟨 Cittone | 🟥 Macellaio;LASCIALO AGLI ALTRI
+A;Cutrone;Monza;Slot 5-6 (Semititolare);28;35;16;4;3;🎯 Rigorista;LASCIALO AGLI ALTRI
+A;Bowie;Sassuolo;Slot 5-6 (Titolare);26;32;14;4;0;-;PRENDILO SENZA ESAGERARE
+A;Esposito Se.;Sassuolo;Slot 3-4 (Semititolare);25;30;36;7;5;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista | 🟨 Cittone;PRENDILO SENZA ESAGERARE
+A;Yeboah J.;Venezia;Slot 5-6 (Titolare);23;29;34;10;9;🏋️‍♂️ Stakanovista ;PRENDILO A POCO
+A;Bobcek;Frosinone;Slot 5-6 (Semititolare);21;26;30;20;6;-;SCOMMESSA
+A;Piccoli;Bologna;Slot 5-6 (Semititolare);19;24;32;4;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Ghedjemis;Frosinone;Slot 5-6 (Semititolare);17;21;37;15;3;🏋️‍♂️ Stakanovista | ⚽ Bomber;PRENDILO A POCO
+A;Vitinha O.;Genoa;Slot 5-6 (Semititolare);15;19;35;5;1;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+A;Osmajic;Genoa;Slot 5-6 (Semititolare);12;15;34;9;3;🏋️‍♂️ Stakanovista | Scommessa;PRENDILO A POCO
+A;Bonny;Inter;Slot 5-6 (Semititolare);11;14;33;5;4;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+A;Boga;Juventus;Slot 5-6 (Semititolare);10;12;15;4;0;-;LASCIALO AGLI ALTRI
+A;Adams Akor;Venezia;Slot 5-6 (Titolare);10;12;33;6;2;🏋️‍♂️ Stakanovista |🎯 Vicerigorista;PRENDILO A POCO
+A;Lontani;Parma;Slot 5-6 (Semititolare);10;20;21;10;3;Scommessa;SCOMMESSA
+A;Varela G.;Monza;Slot 5-6 (Semititolare);9;11;32;6;3;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista;SCOMMESSA
+A;Rrahmani Al.;Venezia;Slot 7-8 (Low Cost);8;10;21;2;1;-;LASCIALO AGLI ALTRI
+A;Gnonto;Fiorentina;Slot 7-8 (Low Cost);7;9;23;0;3;-;LASCIALO AGLI ALTRI
+A;Sulemana K.;Atalanta;Slot 7-8 (Low Cost);6;8;25;2;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Adorante;Venezia;Slot 7-8 (Low Cost);6;8;33;17;1;🏋️‍♂️ Stakanovista | ⚽ Bomber | 🎯 Rigorista | ⛑️Infortunato rientra a ottobre;PRENDILO A POCO
+A;Kvernadze;Frosinone;Slot 7-8 (Low Cost);5;6;36;5;5;🏋️‍♂️ Stakanovista;PRENDILO A POCO
+A;Noslin;Lazio;Slot 7-8 (Low Cost);4;5;29;4;2;🏋️‍♂️ Stakanovista | 🟨 Cittone;LASCIALO AGLI ALTRI
+A;Stulic;Lecce;Slot 7-8 (Low Cost);4;5;34;4;0;🏋️‍♂️ Stakanovista | 🎯 Vice rigorista;RIEMPI SLOT
+A;Neres;Napoli;Slot 7-8 (Low Cost);3;4;16;3;3;-;PRENDILO A POCO
+A;Zapata D.;Torino;Slot 7-8 (Low Cost);3;4;28;3;1;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Maldini;Cagliari;Slot 7-8 (Low Cost);2;2;12;2;1;-;SCOMMESSA
+A;Birligea;Frosinone;Slot 7-8 (Low Cost);1;1;22;7;2;-;LASCIALO AGLI ALTRI
+A;Ngonge;Monza;Slot 7-8 (Low Cost);1;1;20;1;1;🎯 Calci Piazzati;LASCIALO AGLI ALTRI
+A;Mendy P.;Cagliari;Slot 7-8 (Low Cost);1;1;9;2;0;-;LASCIALO AGLI ALTRI
+A;Havel;Genoa;Slot 7-8 (Low Cost);1;1;30;13;4;Scommessa;SCOMMESSA
+A;N'Dri;Lecce;Slot 7-8 (Low Cost);1;1;27;2;0;🏋️‍♂️ Stakanovista;LASCIALO AGLI ALTRI
+A;Camarda;Milan;Slot 7-8 (Low Cost);1;1;21;1;0;-;SCOMMESSA
+A;Mota;Monza;Slot 7-8 (Low Cost);1;1;30;5;2;🏋️‍♂️ Stakanovista;RIEMPI SLOT
+A;Giovane;Napoli;Slot 7-8 (Low Cost);1;1;12;0;1;-;LASCIALO AGLI ALTRI
+A;Lang;Napoli;Slot 7-8 (Low Cost);1;1;18;1;2;-;LASCIALO AGLI ALTRI
+A;Lucca;Napoli;Slot 7-8 (Low Cost);1;1;16;1;0;-;LASCIALO AGLI ALTRI
+A;Frigan;Parma;Slot 7-8 (Low Cost);1;1;3;1;0;-;LASCIALO AGLI ALTRI
+A;Kulenovic;Torino;Slot 7-8 (Low Cost);1;1;13;0;1;-;LASCIALO AGLI ALTRI
+A;Gueye;Udinese;Slot 7-8 (Low Cost);1;1;19;1;0;-;LASCIALO AGLI ALTRI
