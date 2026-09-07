@@ -15,35 +15,44 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. CARICAMENTO SFONDO IN BASE64
+# 2. CARICAMENTO IMMAGINI (SFONDO + LOGO SITO)
 # ==========================================
-def get_base64_background():
+def get_base64_image(file_prefix):
+    """
+    Cerca un file nella cartella /data che inizi con `file_prefix`
+    e lo converte in stringa Base64 per l'integrazione HTML/CSS.
+    """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(base_dir, "data")
     
-    extensions = [".png", ".jpg", ".jpeg", ".webp"]
-    bg_path = None
-    
-    for ext in extensions:
-        temp_path = os.path.join(data_dir, f"Fantabooster{ext}")
-        if os.path.exists(temp_path):
-            bg_path = temp_path
-            break
-            
-    if not bg_path and os.path.exists(data_dir):
-        for file in os.listdir(data_dir):
-            if file.lower().startswith("fantabooster"):
-                bg_path = os.path.join(data_dir, file)
-                break
+    if not os.path.exists(data_dir):
+        return None
 
-    if bg_path and os.path.exists(bg_path):
-        with open(bg_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode()
-        ext = os.path.splitext(bg_path)[1].replace(".", "")
-        return f"data:image/{ext};base64,{encoded_string}"
+    extensions = [".png", ".jpg", ".jpeg", ".webp", ".svg"]
+    target_path = None
+    
+    for file in os.listdir(data_dir):
+        file_lower = file.lower()
+        if file_lower.startswith(file_prefix.lower()):
+            target_path = os.path.join(data_dir, file)
+            break
+
+    if target_path and os.path.exists(target_path):
+        ext = os.path.splitext(target_path)[1].replace(".", "").lower()
+        if ext == "svg":
+            mime_type = "image/svg+xml"
+        else:
+            mime_type = f"image/{ext}"
+            
+        with open(target_path, "rb") as img_file:
+            encoded_string = base64.b64encode(img_file.read()).decode()
+        return f"data:{mime_type};base64,{encoded_string}"
+        
     return None
 
-bg_base64 = get_base64_background()
+# Carica lo sfondo e il logo del sito
+bg_base64 = get_base64_image("fantabooster")
+logo_base64 = get_base64_image("nome sito") or get_base64_image("nomesito")
 
 # ==========================================
 # 3. CSS STYLING DEDICATO (GRAFICA TOTALE + TABELLA PREMIUM)
@@ -75,7 +84,22 @@ st.markdown(
 
     {bg_css_rule}
 
-    /* HEADER TITOLO CON GLOW EFFECT */
+    /* CONTENITORE LOGO HEADER */
+    .header-container {{
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 5px;
+    }}
+
+    .site-logo {{
+        max-height: 75px;
+        width: auto;
+        filter: drop-shadow(0px 4px 15px rgba(0, 230, 118, 0.4));
+        object-fit: contain;
+    }}
+
+    /* HEADER TITOLO CON GLOW EFFECT (Fallback se non c'è il logo o in affiancamento) */
     .main-title {{
         font-size: 2.5rem;
         font-weight: 900;
@@ -85,12 +109,14 @@ st.markdown(
         text-shadow: 0px 4px 20px rgba(0, 230, 118, 0.3);
         margin-bottom: 0px;
         letter-spacing: -0.5px;
+        line-height: 1.1;
     }}
     
     .sub-title {{
         color: #cbd5e1;
         font-size: 0.95rem;
         font-weight: 500;
+        margin-top: 5px;
         margin-bottom: 25px;
     }}
 
@@ -181,12 +207,10 @@ st.markdown(
         padding: 10px !important;
     }}
 
-    /* Intestazione Tabella */
     [data-testid="stDataFrame"] iframe {{
         border-radius: 12px;
     }}
 
-    /* Styling celle e testi interni della griglia */
     div[data-testid="stDataFrame"] * {{
         color: #ffffff !important;
         font-weight: 600 !important;
@@ -204,8 +228,19 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Header Principale
-st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.2</div>', unsafe_allow_html=True)
+# Header Principale con Immagine Logo
+if logo_base64:
+    st.markdown(
+        f"""
+        <div class="header-container">
+            <img src="{logo_base64}" class="site-logo" alt="Nome Sito Logo" />
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.3</div>', unsafe_allow_html=True)
+
 st.markdown('<div class="sub-title">Listone Asta Ordinato per Valore Crediti — Delio Palma</div>', unsafe_allow_html=True)
 st.markdown("---")
 
@@ -233,10 +268,8 @@ def load_data():
             except Exception:
                 df = pd.read_csv(file_path, sep=",", encoding="latin1")
 
-        # Memorizza l'indice originale per tracciare i portieri
         df["ORIGINAL_ROW_INDEX"] = df.index + 1
 
-        # Mappatura della Colonna A (Indice 0) come Ruolo Pulito
         col_ruolo_raw = df.columns[0]
         df["RUOLO_CLEAN"] = df[col_ruolo_raw].astype(str).str.strip().str.upper()
 
@@ -285,7 +318,7 @@ def get_col_by_index_or_name(index, keywords, exclude=None):
     return None
 
 
-col_ruolo = df.columns[0]  # Colonna A
+col_ruolo = df.columns[0]
 col_nome = get_col_by_index_or_name(1, ["nome", "calciatore", "giocatore", "player"])
 col_squadra = get_col_by_index_or_name(2, ["squadra", "club", "team"])
 col_slot = get_col_by_index_or_name(3, ["slot"])
