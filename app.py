@@ -91,7 +91,7 @@ def load_data():
         return pd.DataFrame()
 
     try:
-        # Lettura con utf-8-sig e fallback separatore
+        # Lettura del CSV gestendo i vari codici di caratteri
         try:
             df = pd.read_csv(file_path, encoding="utf-8-sig")
             if df.shape[1] <= 1:
@@ -102,12 +102,16 @@ def load_data():
         # Pulizia nomi colonne
         df.columns = df.columns.str.strip()
 
-        # Normalizzazione Ruolo
+        # Identificazione colonna Ruolo
         col_ruolo = next((c for c in df.columns if "ruolo" in c.lower()), None)
         if col_ruolo:
             df["RUOLO"] = df[col_ruolo].astype(str).str.strip().str.upper()
 
-        # Conversione dei campi numerici preservando i dati originali
+        # Identificazione precisa delle colonne statistiche
+        col_subiti = next((c for c in df.columns if "subit" in c.lower()), None)
+        col_clean = next((c for c in df.columns if "clean" in c.lower()), None)
+
+        # Pulizia numerica standard
         for col in df.columns:
             if any(
                 k in col.lower()
@@ -120,6 +124,13 @@ def load_data():
                     .str.extract(r"(-?\d+\.?\d*)")[0],
                     errors="coerce",
                 ).fillna(0)
+
+        # FIX SICUREZZA: azzera Gol Subiti e Clean Sheet per tutti i non-portieri
+        if col_ruolo:
+            if col_subiti:
+                df.loc[df["RUOLO"] != "P", col_subiti] = 0
+            if col_clean:
+                df.loc[df["RUOLO"] != "P", col_clean] = 0
 
         return df
 
@@ -139,7 +150,7 @@ if df.empty:
     st.stop()
 
 
-# Helper per la ricerca flessibile delle colonne
+# Helper per la ricerca delle colonne nel CSV
 def find_col(keywords):
     for kw in keywords:
         for c in df.columns:
@@ -239,7 +250,7 @@ if verdetto_selezionato != "TUTTI" and col_verdetto:
     ]
 
 # ==========================================
-# 6. METRICHE UTILI ASTA (KPI PULITI)
+# 6. METRICHE UTILI ASTA
 # ==========================================
 st.subheader("📊 Panoramica Selezione")
 col1, col2, col3, col4 = st.columns(4)
@@ -282,31 +293,27 @@ st.markdown("---")
 # ==========================================
 st.subheader("📋 Tabella Calciatori & Consigli Asta")
 
-# Definiamo le colonne base e prezzi
+# Colonne base
 cols_base = [col_ruolo, col_nome, col_squadra, col_slot]
 cols_prezzi = [col_p_cons, col_p_max, col_pres]
 
-# Logica colonne per ruolo
+# Selezione rigorosa delle colonne statistiche in base al ruolo selezionato
 if ruolo_selezionato == "P":
-    # Soltanto per la vista esclusiva Portieri
     cols_stats = [col_subiti, col_clean]
-elif ruolo_selezionato in ["D", "C", "A"]:
-    # Soltanto per ruoli di movimento
-    cols_stats = [col_gol, col_assist]
 else:
-    # Per "TUTTI": mostriamo Gol e Assist (le metriche portiere restano nascoste per non creare confusione)
+    # Per D, C, A e vista TUTTI mostriamo solo Goal e Assist
     cols_stats = [col_gol, col_assist]
 
 cols_extra = [col_badge, col_verdetto]
 
-# Assemblaggio e pulizia colonne
+# Unione e rimozione valori non trovati
 cols_to_display = [
     c
     for c in (cols_base + cols_prezzi + cols_stats + cols_extra)
     if c is not None and c in df_filtered.columns
 ]
 
-# Formattazione e intestazioni tabella
+# Formattazione colonne
 column_configuration = {}
 if col_ruolo in cols_to_display:
     column_configuration[col_ruolo] = st.column_config.TextColumn("Ruolo")
