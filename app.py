@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v4.9")
+st.title("⚽ FantaBooster® Engine v5.0")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
@@ -80,7 +80,7 @@ def load_data():
             except Exception:
                 df = pd.read_csv(file_path, sep=",", encoding="latin1")
 
-        # Memorizza l'indice originale per tracciare le prime 62 righe (portieri)
+        # Memorizza l'indice originale per tracciare i portieri
         df["ORIGINAL_ROW_INDEX"] = df.index + 1
 
         # Mappatura della Colonna A (Indice 0) come Ruolo Pulito
@@ -101,7 +101,7 @@ if df.empty:
 
 
 # ==========================================
-# 4. PARSER E INDIVIDUAZIONE COLONNE (PER NOME E POSIZIONE)
+# 4. PARSER E INDIVIDUAZIONE COLONNE
 # ==========================================
 def parse_num(val):
     if pd.isna(val):
@@ -119,7 +119,6 @@ def parse_num(val):
 def get_col_by_index_or_name(index, keywords, exclude=None):
     if exclude is None:
         exclude = []
-    # 1. Cerca per nome
     for c in df.columns:
         if c in ["RUOLO_CLEAN", "ORIGINAL_ROW_INDEX"]:
             continue
@@ -128,7 +127,6 @@ def get_col_by_index_or_name(index, keywords, exclude=None):
             continue
         if any(kw in c_low for kw in keywords):
             return c
-    # 2. In alternativa usa l'indice di colonna (es. H = 7, I = 8)
     if index < len(df.columns):
         return df.columns[index]
     return None
@@ -143,10 +141,7 @@ col_p_cons = get_col_by_index_or_name(4, ["prezzo consigliato", "p_cons", "p.con
 col_p_max = get_col_by_index_or_name(5, ["prezzo massimo", "prezzo max", "p_max", "p.max", "massimo"])
 col_pres = get_col_by_index_or_name(6, ["presenze", "presenz", "pres", "partite", "pg"])
 
-# Colonna H (indice 7) -> Goal
 col_gol = get_col_by_index_or_name(7, ["goal", "gol", "gf"], exclude=["subiti", "prezzo", "max", "consigliato"])
-
-# Colonna I (indice 8) -> Assist
 col_assist = get_col_by_index_or_name(8, ["assist", "ast"], exclude=["max", "massimo", "prezzo", "consigliato", "costo", "crediti", "asta", "slot"])
 
 col_subiti = get_col_by_index_or_name(9, ["subiti", "gs"])
@@ -173,16 +168,10 @@ if col_squadra:
 else:
     squadra_selezionata = "TUTTE"
 
+# FILTRO SLOT: Garantisce opzioni da 1 a 6 + Opzione TUTTI
 if col_slot:
-    slots = ["TUTTI"] + sorted(
-        list(
-            df[col_slot]
-            .dropna()
-            .apply(lambda x: str(int(parse_num(x))) if str(x).strip() != "" else str(x))
-            .unique()
-        )
-    )
-    slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots)
+    slots_disponibili = ["TUTTI", "1", "2", "3", "4", "5", "6"]
+    slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots_disponibili)
 else:
     slot_selezionato = "TUTTI"
 
@@ -209,8 +198,17 @@ if ruolo_selezionato != "TUTTI":
 if squadra_selezionata != "TUTTE" and col_squadra:
     df_filtered = df_filtered[df_filtered[col_squadra].astype(str) == squadra_selezionata]
 
+# LOGICA MATCHING SLOT
 if slot_selezionato != "TUTTI" and col_slot:
-    df_filtered = df_filtered[df_filtered[col_slot].astype(str).str.contains(slot_selezionato)]
+    def match_slot(val):
+        if pd.isna(val):
+            return False
+        val_str = str(val).lower()
+        # Estrae tutti i numeri di slot presenti nel testo (es. "3-4 slot" -> ['3', '4'])
+        numbers = re.findall(r"\d+", val_str)
+        return slot_selezionato in numbers
+
+    df_filtered = df_filtered[df_filtered[col_slot].apply(match_slot)]
 
 if verdetto_selezionato != "TUTTI" and col_verdetto:
     df_filtered = df_filtered[df_filtered[col_verdetto].astype(str) == verdetto_selezionato]
@@ -247,8 +245,6 @@ if ricerca_nome and not df_filtered.empty:
         with st.container():
             st.markdown(f"### **{p_nome}** ({p_ruolo} - {p_squadra})")
 
-            # REGOLA: Se la riga nel CSV è <= 62 OPPURE il ruolo è 'P', lo tratta come Portiere.
-            # Tutti i restanti (dalla riga 63 in poi) mostrano GOAL e ASSIST.
             if row_num <= 62 or p_ruolo == "P":
                 c1, c2, c3, c4, c5 = st.columns(5)
                 c1.metric("Prezzo Consigliato", f"{p_cons} cr")
@@ -272,17 +268,6 @@ if ricerca_nome and not df_filtered.empty:
                     if badge_list:
                         badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
                         st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
-
-            # Diagnostica per la verifica dei dati estratti
-            with st.expander("🛠️ Diagnostica Dati Riga CSV"):
-                st.write({
-                    "Numero Riga CSV": row_num,
-                    "Colonna A (Ruolo)": p_ruolo,
-                    "Colonna H (Goal)": val_gol,
-                    "Colonna I (Assist)": val_ast,
-                    "Nome Colonna Goal Identificato": col_gol,
-                    "Nome Colonna Assist Identificato": col_assist,
-                })
 
             st.markdown("---")
 
@@ -314,7 +299,7 @@ if col_nome:
 if col_squadra:
     column_configuration[col_squadra] = st.column_config.TextColumn("Squadra")
 if col_slot:
-    column_configuration[col_slot] = st.column_config.NumberColumn("Slot", format="%d")
+    column_configuration[col_slot] = st.column_config.TextColumn("Slot")
 if col_p_cons:
     column_configuration[col_p_cons] = st.column_config.NumberColumn("Prezzo Consigliato", format="%d cr")
 if col_p_max:
