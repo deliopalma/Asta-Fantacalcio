@@ -77,51 +77,61 @@ st.markdown("---")
 
 
 # ==========================================
-# 3. FUNZIONE CARICAMENTO DATI (CSV IN CARTA DATA/)
+# 3. FUNZIONE CARICAMENTO DATI (CON GESTIONE BOM E SEPARATORI)
 # ==========================================
 @st.cache_data
 def load_data():
-    # Costruiamo il percorso relativo verso la cartella data/
     base_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(base_dir, "data", "tutti_2027.csv")
 
     if not os.path.exists(file_path):
         st.error(
-            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che il file 'tutti_2027.csv' sia stato caricato dentro la cartella 'data/' su GitHub."
+            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che il file 'tutti_2027.csv' sia presente nella cartella 'data/'."
         )
         return pd.DataFrame()
 
     try:
-        # Tenta prima la lettura con virgola, altrimenti con punto e virgola ';'
+        # utf-8-sig rimuove l'eventuale carattere invisibile BOM all'inizio del file
         try:
-            df = pd.read_csv(file_path)
-            if df.shape[1] <= 1:  # Se legge una sola colonna, il separatore è probabilmente ';'
-                df = pd.read_csv(file_path, sep=";")
+            df = pd.read_csv(file_path, encoding="utf-8-sig")
+            if df.shape[1] <= 1:
+                df = pd.read_csv(file_path, sep=";", encoding="utf-8-sig")
         except Exception:
-            df = pd.read_csv(file_path, sep=";")
+            df = pd.read_csv(file_path, sep=";", encoding="latin1")
 
-        # Pulizia intestazioni colonne
+        # Rimuove spazi vuoti e mappa tutti i nomi colonna
         df.columns = df.columns.str.strip()
 
-        # Conversione numerica sicura
-        cols_numeriche = [
-            "Prezzo consigliato",
-            "Prezzo Massimo",
-            "Presenze",
-            "Goal subiti",
-            "Clean Sheet",
-            "Goal fatti",
-            "Assist",
-        ]
+        # Ricerca della colonna Ruolo indipendente dalle maiuscole/minuscole
+        col_ruolo = [c for c in df.columns if c.upper() == "RUOLO"]
+        if col_ruolo:
+            df["RUOLO"] = df[col_ruolo[0]].astype(str).str.strip().str.upper()
+        else:
+            st.error("❌ Colonna 'RUOLO' non trovata all'interno del file CSV.")
+            return pd.DataFrame()
 
-        for col in cols_numeriche:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
+        # Normalizzazione colonne numeriche
+        map_colonne = {
+            "PREZZO CONSIGLIATO": "Prezzo consigliato",
+            "PREZZO MASSIMO": "Prezzo Massimo",
+            "PRESENZE": "Presenze",
+            "GOAL SUBITI": "Goal subiti",
+            "CLEAN SHEET": "Clean Sheet",
+            "GOAL FATTI": "Goal fatti",
+            "ASSIST": "Assist",
+        }
+
+        # Crea un dizionario in maiuscolo per fare il match sicuro
+        cols_upper = {c.upper(): c for c in df.columns}
+
+        for col_key_upper, target_name in map_colonne.items():
+            if col_key_upper in cols_upper:
+                orig_col = cols_upper[col_key_upper]
+                df[target_name] = pd.to_numeric(
+                    df[orig_col], errors="coerce"
+                ).fillna(0)
             else:
-                df[col] = 0
-
-        if "RUOLO" in df.columns:
-            df["RUOLO"] = df["RUOLO"].astype(str).str.strip().str.upper()
+                df[target_name] = 0
 
         return df
 
@@ -131,40 +141,63 @@ def load_data():
         )
         return pd.DataFrame()
 
+
+df = load_data()
+
+if df.empty:
+    st.warning(
+        "Caricamento dati non riuscito. Controlla il file CSV nella cartella 'data/' e riprova."
+    )
+    st.stop()
+
 # ==========================================
 # 4. SIDEBAR: FILTRI & CONTROLLI
 # ==========================================
 st.sidebar.header("🔍 Filtri Ricerca & Asta")
 
 # Filtro Ruolo
-ruoli_disponibili = ["TUTTI"] + sorted(list(df["RUOLO"].unique()))
+ruoli_disponibili = ["TUTTI"] + sorted(
+    [r for r in df["RUOLO"].unique() if r and r != "NAN"]
+)
 ruolo_selezionato = st.sidebar.selectbox("Seleziona Ruolo", ruoli_disponibili)
 
 # Filtro Squadra
-if "SQUADRA" in df.columns:
-    squadre = ["TUTTE"] + sorted(list(df["SQUADRA"].dropna().unique()))
+col_squadra = [
+    c
+    for c in df.columns
+    if c.upper() in ["SQUADRA", "NOME SQUADRA", "CLUB", "TEAM"]
+]
+if col_squadra:
+    nome_col_squadra = col_squadra[0]
+    squadre = ["TUTTE"] + sorted(
+        list(df[nome_col_squadra].dropna().astype(str).unique())
+    )
     squadra_selezionata = st.sidebar.selectbox("Seleziona Squadra", squadre)
 else:
     squadra_selezionata = "TUTTE"
+    nome_col_squadra = None
 
 # Ricerca Nome
 ricerca_nome = st.sidebar.text_input("Cerca Calciatore per Nome:", "")
 
 # Filtro Slot
-if "SLOT" in df.columns:
+col_slot = [c for c in df.columns if c.upper() == "SLOT"]
+if col_slot:
+    nome_col_slot = col_slot[0]
     slot_disponibili = ["TUTTI"] + sorted(
-        [str(s) for s in df["SLOT"].dropna().unique()]
+        [str(s) for s in df[nome_col_slot].dropna().unique()]
     )
     slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slot_disponibili)
 else:
+    nome_col_slot = None
     slot_selezionato = "TUTTI"
 
 # Filtro Verdetto Algoritmo
-col_verdetto = [c for c in df.columns if "Prendi o lascia" in c]
+col_verdetto = [c for c in df.columns if "PRENDI O LASCIA" in c.upper()]
 if col_verdetto:
     nome_col_verdetto = col_verdetto[0]
     verdetti = ["TUTTI"] + sorted(
-        list(df[nome_col_verdetto].dropna().unique())
+        list(df[nome_col_verdetto].dropna().astype(str).unique())
     )
     verdetto_selezionato = st.sidebar.selectbox(
         "Verdetto Algoritmo 🎲", verdetti
@@ -181,27 +214,28 @@ df_filtered = df.copy()
 if ruolo_selezionato != "TUTTI":
     df_filtered = df_filtered[df_filtered["RUOLO"] == ruolo_selezionato]
 
-if squadra_selezionata != "TUTTE" and "SQUADRA" in df_filtered.columns:
+if squadra_selezionata != "TUTTE" and nome_col_squadra:
     df_filtered = df_filtered[
-        df_filtered["SQUADRA"] == squadra_selezionata
+        df_filtered[nome_col_squadra].astype(str) == squadra_selezionata
     ]
 
 if ricerca_nome:
-    col_nome = [c for c in df_filtered.columns if "NOME" in c.upper()][0]
-    df_filtered = df_filtered[
-        df_filtered[col_nome]
-        .astype(str)
-        .str.contains(ricerca_nome, case=False, na=False)
-    ]
+    col_nome = [c for c in df_filtered.columns if "NOME" in c.upper()]
+    if col_nome:
+        df_filtered = df_filtered[
+            df_filtered[col_nome[0]]
+            .astype(str)
+            .str.contains(ricerca_nome, case=False, na=False)
+        ]
 
-if slot_selezionato != "TUTTI" and "SLOT" in df_filtered.columns:
+if slot_selezionato != "TUTTI" and nome_col_slot:
     df_filtered = df_filtered[
-        df_filtered["SLOT"].astype(str) == slot_selezionato
+        df_filtered[nome_col_slot].astype(str) == slot_selezionato
     ]
 
 if verdetto_selezionato != "TUTTI" and nome_col_verdetto:
     df_filtered = df_filtered[
-        df_filtered[nome_col_verdetto] == verdetto_selezionato
+        df_filtered[nome_col_verdetto].astype(str) == verdetto_selezionato
     ]
 
 # ==========================================
@@ -244,45 +278,24 @@ st.markdown("---")
 # ==========================================
 st.subheader("📋 Tabella Calciatori & Consigli Asta")
 
-# Selezione colonne in base al ruolo scelto
+# Individuazione colonne da mostrare
+cols_base = [c for c in df_filtered.columns if c.upper() in ["RUOLO", "NOME"]]
+
+if nome_col_squadra and nome_col_squadra not in cols_base:
+    cols_base.append(nome_col_squadra)
+
+if nome_col_slot and nome_col_slot not in cols_base:
+    cols_base.append(nome_col_slot)
+
 if ruolo_selezionato == "P":
-    cols_to_display = [
-        col
-        for col in [
-            "RUOLO",
-            "NOME",
-            "NOME SQUADRA",
-            "SQUADRA",
-            "SLOT",
-            "Prezzo consigliato",
-            "Prezzo Massimo",
-            "Presenze",
-            "Goal subiti",
-            "Clean Sheet",
-            "Badge",
-            nome_col_verdetto,
-        ]
-        if col in df_filtered.columns
-    ]
+    cols_stats = ["Prezzo consigliato", "Prezzo Massimo", "Presenze", "Goal subiti", "Clean Sheet"]
 else:
-    cols_to_display = [
-        col
-        for col in [
-            "RUOLO",
-            "NOME",
-            "NOME SQUADRA",
-            "SQUADRA",
-            "SLOT",
-            "Prezzo consigliato",
-            "Prezzo Massimo",
-            "Presenze",
-            "Goal fatti",
-            "Assist",
-            "Badge",
-            nome_col_verdetto,
-        ]
-        if col in df_filtered.columns
-    ]
+    cols_stats = ["Prezzo consigliato", "Prezzo Massimo", "Presenze", "Goal fatti", "Assist"]
+
+if nome_col_verdetto:
+    cols_stats.append(nome_col_verdetto)
+
+cols_to_display = [c for c in cols_base + cols_stats if c in df_filtered.columns]
 
 # Configurazione formattazione colonne
 column_configuration = {
