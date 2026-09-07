@@ -281,7 +281,13 @@ col_assist = get_col_by_index_or_name(8, ["assist", "ast"], exclude=["max", "mas
 col_subiti = get_col_by_index_or_name(9, ["subiti", "gs"])
 col_clean = get_col_by_index_or_name(10, ["clean", "cs"])
 col_badge = get_col_by_index_or_name(11, ["badge", "tag", "caratteristiche", "note"])
-col_verdetto = get_col_by_index_or_name(12, ["verdetto", "consiglio"])
+
+# Mappatura specifica della colonna "prendi o lascia?" per evitare di sovrapporsi con la colonna Ruolo
+col_verdetto = get_col_by_index_or_name(
+    12, 
+    ["prendi o lascia", "prendi/lascia", "prendi", "lascia", "verdetto", "consiglio"], 
+    exclude=[df.columns[0].lower()]
+)
 
 
 # ==========================================
