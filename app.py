@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v4.0")
+st.title("⚽ FantaBooster® Engine v4.1")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
@@ -104,10 +104,10 @@ if df.empty:
 
 
 # ==========================================
-# 4. MAPPATURA PRECISA E DISACCOPPIATA DELLE COLONNE
+# 4. MAPPATURA ROBUSTA DELLE COLONNE
 # ==========================================
 def extract_num(val):
-    """Estrae un numero intero/float da qualsiasi valore senza corromperlo."""
+    """Estrae un intero o float da qualsiasi stringa o valore numerico."""
     if pd.isna(val):
         return 0
     val_str = str(val).replace(",", ".").strip()
@@ -120,53 +120,47 @@ def extract_num(val):
     return 0
 
 
-def find_col_exact(targets, exclude=None):
-    """Cerca la colonna nel CSV verificando che non contenga termini esclusi."""
-    if exclude is None:
-        exclude = []
-    
-    # 1. Corrispondenza esatta del nome colonna
-    for t in targets:
-        for c in df.columns:
-            if c == "RUOLO_CLEAN":
-                continue
-            c_clean = c.lower().strip()
-            if any(ex in c_clean for ex in exclude):
-                continue
-            if c_clean == t.lower().strip():
-                return c
+def find_column(keywords, exclude_keywords=None):
+    """Cerca tra le colonne del dataframe quella che contiene una delle keywords specificate."""
+    if exclude_keywords is None:
+        exclude_keywords = []
 
-    # 2. Corrispondenza parziale se non trova quella esatta
-    for t in targets:
-        for c in df.columns:
-            if c == "RUOLO_CLEAN":
+    for kw in keywords:
+        for col in df.columns:
+            if col == "RUOLO_CLEAN":
                 continue
-            c_clean = c.lower().strip()
-            if any(ex in c_clean for ex in exclude):
+            col_lower = col.lower().strip()
+
+            # Escludi se contiene termini vietati
+            if any(ex in col_lower for ex in exclude_keywords):
                 continue
-            if t.lower().strip() in c_clean:
-                return c
+
+            # Corrispondenza perfetta o contenimento della parola chiave
+            if kw == col_lower or kw in col_lower:
+                return col
     return None
 
 
-col_ruolo = find_col_exact(["ruolo", "r"])
-col_nome = find_col_exact(["nome", "calciatore", "giocatore", "player"])
-col_squadra = find_col_exact(["squadra", "club", "team"])
-col_slot = find_col_exact(["slot"])
+col_ruolo = find_column(["ruolo", "r"])
+col_nome = find_column(["nome", "calciatore", "giocatore", "player"])
+col_squadra = find_column(["squadra", "club", "team"])
+col_slot = find_column(["slot"])
 
-col_p_cons = find_col_exact(["prezzo consigliato", "p_cons", "prezzo cons", "consigliato"])
-col_p_max = find_col_exact(["prezzo massimo", "prezzo max", "p_max", "massimo"])
+col_p_cons = find_column(["consigliato", "p_cons", "p.cons", "prezzo cons"])
+col_p_max = find_column(["massimo", "prezzo max", "p_max", "p.max"], exclude_keywords=["consigliato"])
 
-col_pres = find_col_exact(["presenz", "presenze", "pres", "partite", "pg"])
-col_gol = find_col_exact(["goal fatti", "gol fatti", "gol", "goal", "gf"], exclude=["subiti", "prezzo", "consigliato", "max", "massimo"])
+col_pres = find_column(["presenze", "presenz", "pres", "partite", "pg"])
 
-# Mappatura rigorosa per assist: si escludono esplicitamente termini come "massimo" o "max"
-col_assist = find_col_exact(["assist fatti", "assist", "ast"], exclude=["max", "massimo", "prezzo", "consigliato"])
+# Ricerca Gol: Cerca prima combinazioni univoche, evitando prezzi
+col_gol = find_column(["goal fatti", "gol fatti", "gol", "goal", "gf"], exclude_keywords=["subit", "prezzo", "consigliato", "max", "massimo"])
 
-col_subiti = find_col_exact(["goal subiti", "gol subiti", "subiti", "gs"])
-col_clean = find_col_exact(["clean sheet", "cleansheet", "clean", "cs"])
-col_badge = find_col_exact(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
-col_verdetto = find_col_exact(["verdetto", "prendi o lascia", "consiglio"])
+# Ricerca Assist: evita espressamente colonne di prezzo o presenze
+col_assist = find_column(["assist fatti", "assist", "ast", "ass"], exclude_keywords=["max", "massimo", "prezzo", "consigliato", "presenz"])
+
+col_subiti = find_column(["goal subiti", "gol subiti", "subiti", "gs"])
+col_clean = find_column(["clean sheet", "cleansheet", "clean", "cs"])
+col_badge = find_column(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
+col_verdetto = find_column(["verdetto", "prendi o lascia", "consiglio"])
 
 
 # ==========================================
@@ -229,7 +223,7 @@ if slot_selezionato != "TUTTI" and col_slot:
 if verdetto_selezionato != "TUTTI" and col_verdetto:
     df_filtered = df_filtered[df_filtered[col_verdetto].astype(str) == verdetto_selezionato]
 
-# Ordina dal più costoso al meno costoso in base al prezzo consigliato o massimo
+# Ordina dal più costoso al meno costoso
 sort_col = col_p_cons if col_p_cons else (col_p_max if col_p_max else df_filtered.columns[0])
 df_filtered["SORT_VAL"] = df_filtered[sort_col].apply(extract_num) if sort_col else 0
 df_filtered = df_filtered.sort_values(by="SORT_VAL", ascending=False)
@@ -245,6 +239,7 @@ if ricerca_nome and not df_filtered.empty:
         p_nome = player[col_nome] if col_nome else "N/A"
         p_ruolo = player["RUOLO_CLEAN"]
         p_squadra = str(player[col_squadra]).strip() if col_squadra and pd.notna(player[col_squadra]) else "N/A"
+        
         p_cons = extract_num(player[col_p_cons]) if col_p_cons else 0
         p_max = extract_num(player[col_p_max]) if col_p_max else 0
         p_pres = extract_num(player[col_pres]) if col_pres else 0
@@ -272,7 +267,7 @@ if ricerca_nome and not df_filtered.empty:
                 c4.metric("Goal Fatti ⚽", p_gol)
                 c5.metric("Assist 🅰️", p_assist)
 
-            # Gestione Badges Singoli
+            # Gestione Badges
             if col_badge and pd.notna(player[col_badge]):
                 raw_badges = str(player[col_badge]).strip()
                 if raw_badges and raw_badges.lower() != "nan":
@@ -281,14 +276,20 @@ if ricerca_nome and not df_filtered.empty:
                         badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
                         st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
 
-            # Strumento di verifica per confermare che le colonne siano distinte
-            with st.expander("🔎 Dettaglio Colonne Riconosciute nel CSV"):
-                st.write({
-                    "Colonna Prezzo Max": col_p_max,
-                    "Colonna Assist": col_assist,
+            # Strumento Diagnostico Colonne CSV
+            with st.expander("🛠️ Strumento Diagnostico CSV (Mappatura Colonne)"):
+                st.write("**Mappatura Attuale Colonne:**")
+                st.json({
+                    "Colonna Nome": col_nome,
+                    "Colonna Squadra": col_squadra,
+                    "Colonna Presenze": col_pres,
                     "Colonna Gol": col_gol,
+                    "Colonna Assist": col_assist,
+                    "Colonna Prezzo Consigliato": col_p_cons,
+                    "Colonna Prezzo Max": col_p_max,
                     "Colonna Badges": col_badge,
                 })
+                st.write("**Elenco di tutte le colonne presenti nel CSV:**", list(df.columns))
 
             st.markdown("---")
 
