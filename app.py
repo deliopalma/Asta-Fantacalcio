@@ -52,13 +52,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v3.8")
+st.title("⚽ FantaBooster® Engine v3.9")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
 
 # ==========================================
-# 3. LETTURA & PARSING ROBUSTO CSV
+# 3. LETTURA CSV
 # ==========================================
 @st.cache_data
 def load_data():
@@ -104,58 +104,55 @@ if df.empty:
 
 
 # ==========================================
-# 4. FUNZIONI ESTRAZIONE VALORI & COLONNE
+# 4. MAPPATURA PRECISA DELLE COLONNE
 # ==========================================
 def extract_num(val):
-    """Estrae un intero valido da qualsiasi formato di stringa/numero."""
+    """Estrae un numero intero/float da qualsiasi valore senza corromperlo."""
     if pd.isna(val):
         return 0
     val_str = str(val).replace(",", ".").strip()
-    match = re.search(r"\d+", val_str)
+    match = re.search(r"\d+(\.\d+)?", val_str)
     if match:
         try:
-            return int(match.group())
+            return int(float(match.group()))
         except ValueError:
             return 0
     return 0
 
 
-def find_col(keywords, exclude=None):
-    """Cerca la colonna più idonea in base alle parole chiave."""
-    for kw in keywords:
+def find_col_exact(targets):
+    """Cerca prima la corrispondenza esatta del nome colonna nel CSV."""
+    for t in targets:
         for c in df.columns:
             if c == "RUOLO_CLEAN":
                 continue
-            c_clean = c.lower().replace("_", " ").replace("-", " ")
-            if kw in c_clean:
-                if exclude and any(ex in c_clean for ex in exclude):
-                    continue
+            if c.lower().strip() == t.lower().strip():
+                return c
+    # Fallback su ricerca parziale
+    for t in targets:
+        for c in df.columns:
+            if c == "RUOLO_CLEAN":
+                continue
+            if t.lower().strip() in c.lower().strip():
                 return c
     return None
 
 
-col_ruolo = find_col(["ruolo", "role", "r"])
-col_nome = find_col(["nome", "calciatore", "giocatore", "player"])
-col_squadra = find_col(["squadra", "club", "team"])
-col_slot = find_col(["slot"])
+col_ruolo = find_col_exact(["ruolo", "r"])
+col_nome = find_col_exact(["nome", "calciatore", "giocatore", "player"])
+col_squadra = find_col_exact(["squadra", "club", "team"])
+col_slot = find_col_exact(["slot"])
 
-col_p_cons = find_col(["consigliato", "prezzo cons", "p_cons", "prezzo consigliato"])
-col_p_max = find_col(["massimo", "prezzo max", "p_max", "prezzo massimo"], exclude=["consigliato"])
+col_p_cons = find_col_exact(["prezzo consigliato", "p_cons", "prezzo cons", "consigliato"])
+col_p_max = find_col_exact(["prezzo massimo", "prezzo max", "p_max", "massimo"])
 
-col_pres = find_col(["presenz", "pres", "partite", "pg"])
-col_gol = find_col(["goal", "gol", "gf", "g"], exclude=["subit", "prezzo", "consigliato", "max"])
-col_assist = find_col(["assist", "ass", "ast", "a"], exclude=["prezzo", "max", "consigliato", "presenz"])
-col_subiti = find_col(["subit", "gs", "goal subiti", "gol subiti"])
-col_clean = find_col(["clean", "cs", "sheet"])
-col_badge = find_col(["badge", "tag", "note"])
-col_verdetto = find_col(["verdetto", "prendi o lascia", "consiglio"])
-
-
-# Applichiamo la pulizia numerica a tutte le colonne statistiche
-numeric_cols = [col_p_cons, col_p_max, col_pres, col_gol, col_assist, col_subiti, col_clean]
-for col in numeric_cols:
-    if col and col in df.columns:
-        df[col] = df[col].apply(extract_num)
+col_pres = find_col_exact(["presenz", "presenze", "pres", "partite", "pg"])
+col_gol = find_col_exact(["goal fatti", "gol fatti", "gol", "goal", "gf"])
+col_assist = find_col_exact(["assist", "ass", "ast"])
+col_subiti = find_col_exact(["goal subiti", "gol subiti", "subiti", "gs"])
+col_clean = find_col_exact(["clean sheet", "cleansheet", "clean", "cs"])
+col_badge = find_col_exact(["badge", "badges", "tag", "tags", "note", "caratteristiche"])
+col_verdetto = find_col_exact(["verdetto", "prendi o lascia", "consiglio"])
 
 
 # ==========================================
@@ -181,7 +178,7 @@ if col_slot:
         list(
             df[col_slot]
             .dropna()
-            .apply(lambda x: str(int(x)) if isinstance(x, float) else str(x))
+            .apply(lambda x: str(int(extract_num(x))) if str(x).strip() != "" else str(x))
             .unique()
         )
     )
@@ -218,9 +215,10 @@ if slot_selezionato != "TUTTI" and col_slot:
 if verdetto_selezionato != "TUTTI" and col_verdetto:
     df_filtered = df_filtered[df_filtered[col_verdetto].astype(str) == verdetto_selezionato]
 
-# Ordina dal più costoso al meno costoso
+# Ordina dal più costoso al meno costoso in base al prezzo consigliato o massimo
 sort_col = col_p_cons if col_p_cons else (col_p_max if col_p_max else df_filtered.columns[0])
-df_filtered = df_filtered.sort_values(by=sort_col, ascending=False)
+df_filtered["SORT_VAL"] = df_filtered[sort_col].apply(extract_num) if sort_col else 0
+df_filtered = df_filtered.sort_values(by="SORT_VAL", ascending=False)
 
 
 # ==========================================
@@ -232,19 +230,19 @@ if ricerca_nome and not df_filtered.empty:
     for _, player in df_filtered.head(3).iterrows():
         p_nome = player[col_nome] if col_nome else "N/A"
         p_ruolo = player["RUOLO_CLEAN"]
-        p_squadra = player[col_squadra] if col_squadra else "N/A"
-        p_cons = player[col_p_cons] if col_p_cons else 0
-        p_max = player[col_p_max] if col_p_max else 0
-        p_pres = player[col_pres] if col_pres else 0
-        p_gol = player[col_gol] if col_gol else 0
-        p_assist = player[col_assist] if col_assist else 0
-        p_subiti = player[col_subiti] if col_subiti else 0
-        p_clean = player[col_clean] if col_clean else 0
+        p_squadra = str(player[col_squadra]).strip() if col_squadra and pd.notna(player[col_squadra]) else "N/A"
+        p_cons = extract_num(player[col_p_cons]) if col_p_cons else 0
+        p_max = extract_num(player[col_p_max]) if col_p_max else 0
+        p_pres = extract_num(player[col_pres]) if col_pres else 0
+        p_gol = extract_num(player[col_gol]) if col_gol else 0
+        p_assist = extract_num(player[col_assist]) if col_assist else 0
+        p_subiti = extract_num(player[col_subiti]) if col_subiti else 0
+        p_clean = extract_num(player[col_clean]) if col_clean else 0
 
         with st.container():
             st.markdown(f"### **{p_nome}** ({p_ruolo} - {p_squadra})")
 
-            # Layout Metriche in base al ruolo
+            # Layout Metriche
             if p_ruolo == "P":
                 c1, c2, c3, c4, c5 = st.columns(5)
                 c1.metric("Prezzo Consigliato", f"{p_cons} cr")
@@ -262,21 +260,22 @@ if ricerca_nome and not df_filtered.empty:
 
             # Gestione Badges Singoli
             if col_badge and pd.notna(player[col_badge]):
-                raw_badges = str(player[col_badge])
-                badge_list = [b.strip() for b in re.split(r"[,;|/\n]+", raw_badges) if b.strip()]
-                if badge_list:
-                    badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
-                    st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
+                raw_badges = str(player[col_badge]).strip()
+                if raw_badges and raw_badges.lower() != "nan":
+                    # Separazione flessibile su virgola, punto e virgola, trattino o slash
+                    badge_list = [b.strip() for b in re.split(r"[,;|/\n]+", raw_badges) if b.strip()]
+                    if badge_list:
+                        badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
+                        st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
 
-            # Debug rapido (espandibile se serve verificare le colonne trovate)
-            with st.expander("🔎 Verifica Valori Colonne CSV"):
+            # Strumento per verificare le intestazioni esatte riconosciute
+            with st.expander("🔎 Dettaglio Colonne Riconosciute nel CSV"):
                 st.write({
-                    "Colonna Gol Riconosciuta": col_gol,
-                    "Valore Gol": p_gol,
-                    "Colonna Assist Riconosciuta": col_assist,
-                    "Valore Assist": p_assist,
-                    "Colonna Presenze Riconosciuta": col_pres,
-                    "Valore Presenze": p_pres
+                    "Colonna Nome": col_nome,
+                    "Colonna Squadra": col_squadra,
+                    "Colonna Gol": col_gol,
+                    "Colonna Assist": col_assist,
+                    "Colonna Badges": col_badge,
                 })
 
             st.markdown("---")
