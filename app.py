@@ -1,5 +1,6 @@
 import os
 import re
+import base64
 import pandas as pd
 import streamlit as st
 
@@ -14,26 +15,70 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. CSS STYLING DEDICATO (STILE FANTALAB/FANTAMASTER)
+# 2. CARICAMENTO SFONDO IN BASE64
 # ==========================================
-st.markdown(
-    """
-    <style>
-    /* Google Font Import */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+def get_base64_background():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(base_dir, "data")
+    
+    # Cerca l'immagine "Fantabooster" con qualsiasi estensione
+    extensions = [".png", ".jpg", ".jpeg", ".webp"]
+    bg_path = None
+    
+    for ext in extensions:
+        temp_path = os.path.join(data_dir, f"Fantabooster{ext}")
+        if os.path.exists(temp_path):
+            bg_path = temp_path
+            break
+            
+    if not bg_path:
+        # Fallback nel caso il nome sia scritto in minuscolo
+        for file in os.listdir(data_dir) if os.path.exists(data_dir) else []:
+            if file.lower().startswith("fantabooster"):
+                bg_path = os.path.join(data_dir, file)
+                break
 
-    html, body, [class*="css"] {
-        font-family: 'Poppins', sans-serif;
-    }
+    if bg_path and os.path.exists(bg_path):
+        with open(bg_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+        ext = os.path.splitext(bg_path)[1].replace(".", "")
+        return f"data:image/{ext};base64,{encoded_string}"
+    return None
 
-    /* SFONDO GENERALE APP */
+bg_base64 = get_base64_background()
+
+# ==========================================
+# 3. CSS STYLING DEDICATO (STILE FANTALAB CON SFONDO CUSTOM)
+# ==========================================
+bg_css_rule = f"""
+    .stApp {{
+        background: linear-gradient(rgba(11, 14, 20, 0.82), rgba(11, 14, 20, 0.92)), url("{bg_base64}") !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: fixed !important;
+        color: #f1f5f9;
+    }}
+""" if bg_base64 else """
     .stApp {
         background: radial-gradient(circle at 50% 10%, #151a26 0%, #0b0e14 100%);
         color: #f1f5f9;
     }
+"""
+
+st.markdown(
+    f"""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+
+    html, body, [class*="css"] {{
+        font-family: 'Poppins', sans-serif;
+    }}
+
+    {bg_css_rule}
 
     /* HEADER TITOLO CON GLOW EFFECT */
-    .main-title {
+    .main-title {{
         font-size: 2.5rem;
         font-weight: 900;
         background: linear-gradient(135deg, #00E676 0%, #00B0FF 100%);
@@ -42,120 +87,121 @@ st.markdown(
         text-shadow: 0px 4px 20px rgba(0, 230, 118, 0.3);
         margin-bottom: 0px;
         letter-spacing: -0.5px;
-    }
+    }}
     
-    .sub-title {
-        color: #94a3b8;
+    .sub-title {{
+        color: #cbd5e1;
         font-size: 0.95rem;
         font-weight: 500;
         margin-bottom: 25px;
-    }
+    }}
 
     /* SIDEBAR MODERNA */
-    section[data-testid="stSidebar"] {
-        background: #0f131c !important;
+    section[data-testid="stSidebar"] {{
+        background: rgba(15, 19, 28, 0.92) !important;
+        backdrop-filter: blur(15px);
         border-right: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-    }
+    }}
 
     /* INPUT E SELECTBOX GLOSSY */
-    .stTextInput > div > div > input, .stSelectbox > div > div > div {
-        background: rgba(22, 28, 41, 0.8) !important;
-        border: 1px solid rgba(0, 230, 118, 0.3) !important;
+    .stTextInput > div > div > input, .stSelectbox > div > div > div {{
+        background: rgba(22, 28, 41, 0.85) !important;
+        border: 1px solid rgba(0, 230, 118, 0.35) !important;
         border-radius: 10px !important;
         color: #ffffff !important;
         font-weight: 600 !important;
         box-shadow: inset 0 2px 4px rgba(0,0,0,0.4), 0 0 10px rgba(0,230,118,0.1);
         transition: all 0.3s ease;
-    }
+    }}
 
-    .stTextInput > div > div > input:focus, .stSelectbox > div > div > div:focus {
+    .stTextInput > div > div > input:focus, .stSelectbox > div > div > div:focus {{
         border-color: #00E676 !important;
         box-shadow: 0 0 15px rgba(0, 230, 118, 0.4) !important;
-    }
+    }}
 
     /* CARDS SCHEDA CALCIATORE (GLASSMORPHISM) */
-    .player-card {
-        background: rgba(19, 24, 37, 0.75);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-top: 1px solid rgba(0, 230, 118, 0.5);
+    .player-card {{
+        background: rgba(19, 24, 37, 0.82);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-top: 1px solid rgba(0, 230, 118, 0.6);
         border-radius: 16px;
         padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-    }
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+    }}
 
-    /* METRICHE CUSTOME CON EFFETTO LUCIDO */
-    [data-testid="stMetric"] {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+    /* METRICHE CUSTOM CON EFFETTO LUCIDO */
+    [data-testid="stMetric"] {{
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         padding: 12px 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }}
 
-    [data-testid="stMetricLabel"] {
-        color: #94a3b8 !important;
+    [data-testid="stMetricLabel"] {{
+        color: #cbd5e1 !important;
         font-weight: 600 !important;
         font-size: 0.82rem !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-    }
+    }}
 
-    [data-testid="stMetricValue"] {
+    [data-testid="stMetricValue"] {{
         color: #ffffff !important;
         font-weight: 800 !important;
         font-size: 1.4rem !important;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 0 10px rgba(0,230,118,0.2);
-    }
+        text-shadow: 0 2px 8px rgba(0,0,0,0.8), 0 0 10px rgba(0,230,118,0.25);
+    }}
 
     /* BADGES PREMIUM STILE FANTALAB */
-    .badge-tag {
+    .badge-tag {{
         display: inline-block;
-        background: linear-gradient(135deg, rgba(0,230,118,0.15) 0%, rgba(0,176,255,0.15) 100%);
+        background: linear-gradient(135deg, rgba(0,230,118,0.2) 0%, rgba(0,176,255,0.2) 100%);
         color: #00E676;
-        border: 1px solid rgba(0, 230, 118, 0.4);
+        border: 1px solid rgba(0, 230, 118, 0.5);
         border-radius: 20px;
         padding: 5px 14px;
         margin: 4px;
         font-size: 0.8rem;
         font-weight: 700;
         letter-spacing: 0.3px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-    }
+    }}
 
-    /* TABELLA CON TESTO BIANCO, OMBRE E BORDI */
-    [data-testid="stDataFrame"] {
-        background: rgba(15, 19, 28, 0.8);
+    /* TABELLA CON TESTO BIANCO E HIGH CONTRAST */
+    [data-testid="stDataFrame"] {{
+        background: rgba(15, 19, 28, 0.85);
+        backdrop-filter: blur(10px);
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         padding: 8px;
-    }
+    }}
 
-    /* DIVIDER PERSONALIZZATO */
-    hr {
+    hr {{
         border: 0;
         height: 1px;
         background: linear-gradient(90deg, rgba(0,230,118,0) 0%, rgba(0,230,118,0.5) 50%, rgba(0,230,118,0) 100%);
         margin: 25px 0;
-    }
+    }}
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 # Header Principale
-st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.0</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title">⚽ FantaBooster® Engine v6.1</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Listone Asta Ordinato per Valore Crediti — Delio Palma</div>', unsafe_allow_html=True)
 st.markdown("---")
 
 
 # ==========================================
-# 3. LETTURA CSV E TRATTAMENTO POSIZIONALE
+# 4. LETTURA CSV E TRATTAMENTO POSIZIONALE
 # ==========================================
 @st.cache_data
 def load_data():
@@ -198,7 +244,7 @@ if df.empty:
 
 
 # ==========================================
-# 4. PARSER E INDIVIDUAZIONE COLONNE
+# 5. PARSER E INDIVIDUAZIONE COLONNE
 # ==========================================
 def parse_num(val):
     if pd.isna(val):
@@ -248,11 +294,10 @@ col_verdetto = get_col_by_index_or_name(12, ["verdetto", "consiglio"])
 
 
 # ==========================================
-# 5. SIDEBAR: FILTRI E RICERCA DINAMICA
+# 6. SIDEBAR: FILTRI E RICERCA DINAMICA
 # ==========================================
 st.sidebar.markdown("### 🔍 Centro di Ricerca")
 
-# Cerca istantanea
 ricerca_nome = st.sidebar.text_input("🔎 Cerca Calciatore:", "", placeholder="Es. Lautaro, Dybala...")
 
 ruoli_disponibili = ["TUTTI"] + [
@@ -266,7 +311,6 @@ if col_squadra:
 else:
     squadra_selezionata = "TUTTE"
 
-# FILTRO SLOT: Supporta opzioni da 1 a 8
 if col_slot:
     slots_disponibili = ["TUTTI", "1", "2", "3", "4", "5", "6", "7", "8"]
     slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots_disponibili)
@@ -281,7 +325,7 @@ else:
 
 
 # ==========================================
-# 6. APPLICAZIONE FILTRI & ORDINAMENTO
+# 7. APPLICAZIONE FILTRI & ORDINAMENTO
 # ==========================================
 df_filtered = df.copy()
 
@@ -296,7 +340,6 @@ if ruolo_selezionato != "TUTTI":
 if squadra_selezionata != "TUTTE" and col_squadra:
     df_filtered = df_filtered[df_filtered[col_squadra].astype(str) == squadra_selezionata]
 
-# LOGICA MATCHING SLOT (1-8)
 if slot_selezionato != "TUTTI" and col_slot:
     def match_slot(val):
         if pd.isna(val):
@@ -317,7 +360,7 @@ df_filtered = df_filtered.sort_values(by="SORT_VAL", ascending=False)
 
 
 # ==========================================
-# 7. SCHEDA DETTAGLIO RICERCA DYNAMIC GLOSSY
+# 8. SCHEDA DETTAGLIO RICERCA DYNAMIC GLOSSY
 # ==========================================
 if ricerca_nome and not df_filtered.empty:
     st.markdown("### 👤 Schede Calciatori Trovati")
@@ -332,7 +375,6 @@ if ricerca_nome and not df_filtered.empty:
         p_max = parse_num(player[col_p_max]) if col_p_max else 0
         p_pres = parse_num(player[col_pres]) if col_pres else 0
 
-        # Lettura a vista da Colonna H (Goal) e Colonna I (Assist)
         val_gol = str(player[col_gol]).strip() if col_gol and pd.notna(player[col_gol]) else "0"
         val_ast = str(player[col_assist]).strip() if col_assist and pd.notna(player[col_assist]) else "0"
 
@@ -357,7 +399,6 @@ if ricerca_nome and not df_filtered.empty:
             c4.metric("Goal (2025/2026) ⚽", val_gol)
             c5.metric("Assist (2025/2026) 🅰️", val_ast)
 
-        # Gestione Badges Glossy
         if col_badge and pd.notna(player[col_badge]):
             raw_badges = str(player[col_badge]).strip()
             if raw_badges and raw_badges.lower() != "nan":
@@ -371,7 +412,7 @@ if ricerca_nome and not df_filtered.empty:
     st.markdown("---")
 
 # ==========================================
-# 8. TABELLA GENERALE HIGH CONTRAST
+# 9. TABELLA GENERALE HIGH CONTRAST
 # ==========================================
 st.markdown("### 📋 Listone Calciatori (Ordinato per Crediti)")
 
