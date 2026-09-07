@@ -77,23 +77,30 @@ st.markdown("---")
 
 
 # ==========================================
-# 3. FUNZIONE CARICAMENTO DATI (CSV CON CACHE)
+# 3. FUNZIONE CARICAMENTO DATI (CSV IN CARTA DATA/)
 # ==========================================
 @st.cache_data
 def load_data():
-    file_name = "tutti_2027.csv"
+    # Costruiamo il percorso relativo verso la cartella data/
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, "data", "tutti_2027.csv")
 
-    if not os.path.exists(file_name):
+    if not os.path.exists(file_path):
         st.error(
-            f"❌ Impossibile trovare il file '{file_name}'. Verifica che sia presente nella directory principale del progetto."
+            f"❌ Impossibile trovare il file in '{file_path}'. Verifica che il file 'tutti_2027.csv' sia stato caricato dentro la cartella 'data/' su GitHub."
         )
         return pd.DataFrame()
 
     try:
-        # Lettura file CSV
-        df = pd.read_csv(file_name)
+        # Tenta prima la lettura con virgola, altrimenti con punto e virgola ';'
+        try:
+            df = pd.read_csv(file_path)
+            if df.shape[1] <= 1:  # Se legge una sola colonna, il separatore è probabilmente ';'
+                df = pd.read_csv(file_path, sep=";")
+        except Exception:
+            df = pd.read_csv(file_path, sep=";")
 
-        # Pulizia intestazioni colonne (rimozione spazi extra)
+        # Pulizia intestazioni colonne
         df.columns = df.columns.str.strip()
 
         # Conversione numerica sicura
@@ -123,15 +130,6 @@ def load_data():
             f"❌ Si è verificato un errore durante la lettura del file CSV: {e}"
         )
         return pd.DataFrame()
-
-
-df = load_data()
-
-if df.empty:
-    st.warning(
-        "Caricamento dati non riuscito. Controlla il file CSV e riprova."
-    )
-    st.stop()
 
 # ==========================================
 # 4. SIDEBAR: FILTRI & CONTROLLI
