@@ -52,7 +52,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v5.0")
+st.title("⚽ FantaBooster® Engine v5.1")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
@@ -168,9 +168,9 @@ if col_squadra:
 else:
     squadra_selezionata = "TUTTE"
 
-# FILTRO SLOT: Garantisce opzioni da 1 a 6 + Opzione TUTTI
+# FILTRO SLOT: Supporta opzioni da 1 a 8
 if col_slot:
-    slots_disponibili = ["TUTTI", "1", "2", "3", "4", "5", "6"]
+    slots_disponibili = ["TUTTI", "1", "2", "3", "4", "5", "6", "7", "8"]
     slot_selezionato = st.sidebar.selectbox("Filtra per Slot", slots_disponibili)
 else:
     slot_selezionato = "TUTTI"
@@ -198,13 +198,12 @@ if ruolo_selezionato != "TUTTI":
 if squadra_selezionata != "TUTTE" and col_squadra:
     df_filtered = df_filtered[df_filtered[col_squadra].astype(str) == squadra_selezionata]
 
-# LOGICA MATCHING SLOT
+# LOGICA MATCHING SLOT (1-8)
 if slot_selezionato != "TUTTI" and col_slot:
     def match_slot(val):
         if pd.isna(val):
             return False
         val_str = str(val).lower()
-        # Estrae tutti i numeri di slot presenti nel testo (es. "3-4 slot" -> ['3', '4'])
         numbers = re.findall(r"\d+", val_str)
         return slot_selezionato in numbers
 
