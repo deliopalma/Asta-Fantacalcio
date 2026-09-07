@@ -52,13 +52,13 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("⚽ FantaBooster® Engine v4.8")
+st.title("⚽ FantaBooster® Engine v4.9")
 st.caption("Listone Asta Ordinato per Valore Crediti — Delio Palma")
 st.markdown("---")
 
 
 # ==========================================
-# 3. LETTURA CSV
+# 3. LETTURA CSV E TRATTAMENTO POSIZIONALE
 # ==========================================
 @st.cache_data
 def load_data():
@@ -80,15 +80,12 @@ def load_data():
             except Exception:
                 df = pd.read_csv(file_path, sep=",", encoding="latin1")
 
-        # Pulizia nomi colonne
-        df.columns = [str(c).strip() for c in df.columns]
+        # Memorizza l'indice originale per tracciare le prime 62 righe (portieri)
+        df["ORIGINAL_ROW_INDEX"] = df.index + 1
 
-        # Normalizzazione Ruolo
-        col_r = next((c for c in df.columns if "ruolo" in c.lower()), None)
-        if col_r:
-            df["RUOLO_CLEAN"] = df[col_r].astype(str).str.strip().str.upper()
-        else:
-            df["RUOLO_CLEAN"] = ""
+        # Mappatura della Colonna A (Indice 0) come Ruolo Pulito
+        col_ruolo_raw = df.columns[0]
+        df["RUOLO_CLEAN"] = df[col_ruolo_raw].astype(str).str.strip().str.upper()
 
         return df
 
@@ -104,7 +101,7 @@ if df.empty:
 
 
 # ==========================================
-# 4. FUNZIONE DI TRASFORMAZIONE E MAPPATURA
+# 4. PARSER E INDIVIDUAZIONE COLONNE (PER NOME E POSIZIONE)
 # ==========================================
 def parse_num(val):
     if pd.isna(val):
@@ -119,38 +116,43 @@ def parse_num(val):
     return 0
 
 
-def find_col_by_keywords(keywords, exclude=None):
+def get_col_by_index_or_name(index, keywords, exclude=None):
     if exclude is None:
         exclude = []
+    # 1. Cerca per nome
     for c in df.columns:
-        if c == "RUOLO_CLEAN":
+        if c in ["RUOLO_CLEAN", "ORIGINAL_ROW_INDEX"]:
             continue
         c_low = c.lower()
         if any(ex in c_low for ex in exclude):
             continue
         if any(kw in c_low for kw in keywords):
             return c
+    # 2. In alternativa usa l'indice di colonna (es. H = 7, I = 8)
+    if index < len(df.columns):
+        return df.columns[index]
     return None
 
 
-col_ruolo = find_col_by_keywords(["ruolo", "r"])
-col_nome = find_col_by_keywords(["nome", "calciatore", "giocatore", "player"])
-col_squadra = find_col_by_keywords(["squadra", "club", "team"])
-col_slot = find_col_by_keywords(["slot"])
+col_ruolo = df.columns[0]  # Colonna A
+col_nome = get_col_by_index_or_name(1, ["nome", "calciatore", "giocatore", "player"])
+col_squadra = get_col_by_index_or_name(2, ["squadra", "club", "team"])
+col_slot = get_col_by_index_or_name(3, ["slot"])
 
-col_p_cons = find_col_by_keywords(["prezzo consigliato", "p_cons", "p.cons", "consigliato"])
-col_p_max = find_col_by_keywords(["prezzo massimo", "prezzo max", "p_max", "p.max", "massimo"])
+col_p_cons = get_col_by_index_or_name(4, ["prezzo consigliato", "p_cons", "p.cons", "consigliato"])
+col_p_max = get_col_by_index_or_name(5, ["prezzo massimo", "prezzo max", "p_max", "p.max", "massimo"])
+col_pres = get_col_by_index_or_name(6, ["presenze", "presenz", "pres", "partite", "pg"])
 
-col_pres = find_col_by_keywords(["presenze", "presenz", "pres", "partite", "pg"])
+# Colonna H (indice 7) -> Goal
+col_gol = get_col_by_index_or_name(7, ["goal", "gol", "gf"], exclude=["subiti", "prezzo", "max", "consigliato"])
 
-# Ricerca colonne Goal e Assist
-col_gol = find_col_by_keywords(["goal", "gol", "gf"], exclude=["subiti", "prezzo", "max", "consigliato"])
-col_assist = find_col_by_keywords(["assist", "ast"], exclude=["max", "massimo", "prezzo", "consigliato", "costo", "crediti", "asta", "slot"])
+# Colonna I (indice 8) -> Assist
+col_assist = get_col_by_index_or_name(8, ["assist", "ast"], exclude=["max", "massimo", "prezzo", "consigliato", "costo", "crediti", "asta", "slot"])
 
-col_subiti = find_col_by_keywords(["subiti", "gs"])
-col_clean = find_col_by_keywords(["clean", "cs"])
-col_badge = find_col_by_keywords(["badge", "tag", "caratteristiche", "note"])
-col_verdetto = find_col_by_keywords(["verdetto", "consiglio"])
+col_subiti = get_col_by_index_or_name(9, ["subiti", "gs"])
+col_clean = get_col_by_index_or_name(10, ["clean", "cs"])
+col_badge = get_col_by_index_or_name(11, ["badge", "tag", "caratteristiche", "note"])
+col_verdetto = get_col_by_index_or_name(12, ["verdetto", "consiglio"])
 
 
 # ==========================================
@@ -213,7 +215,7 @@ if slot_selezionato != "TUTTI" and col_slot:
 if verdetto_selezionato != "TUTTI" and col_verdetto:
     df_filtered = df_filtered[df_filtered[col_verdetto].astype(str) == verdetto_selezionato]
 
-# Ordina dal più costoso al meno costoso
+# Ordina per prezzo consigliato
 sort_col = col_p_cons if col_p_cons else (col_p_max if col_p_max else df_filtered.columns[0])
 df_filtered["SORT_VAL"] = df_filtered[sort_col].apply(parse_num) if sort_col else 0
 df_filtered = df_filtered.sort_values(by="SORT_VAL", ascending=False)
@@ -226,6 +228,7 @@ if ricerca_nome and not df_filtered.empty:
     st.subheader("👤 Scheda Dettagliata Calciatore")
 
     for _, player in df_filtered.head(3).iterrows():
+        row_num = player["ORIGINAL_ROW_INDEX"]
         p_nome = player[col_nome] if col_nome else "N/A"
         p_ruolo = player["RUOLO_CLEAN"]
         p_squadra = str(player[col_squadra]).strip() if col_squadra and pd.notna(player[col_squadra]) else "N/A"
@@ -234,18 +237,9 @@ if ricerca_nome and not df_filtered.empty:
         p_max = parse_num(player[col_p_max]) if col_p_max else 0
         p_pres = parse_num(player[col_pres]) if col_pres else 0
 
-        # ESTRAZIONE VALORI DIRETTI A VISTA DA CSV
-        if col_gol and pd.notna(player[col_gol]):
-            raw_gol = str(player[col_gol]).strip()
-            val_gol = raw_gol if raw_gol != "" else "0"
-        else:
-            val_gol = "0"
-
-        if col_assist and pd.notna(player[col_assist]):
-            raw_ast = str(player[col_assist]).strip()
-            val_ast = raw_ast if raw_ast != "" else "0"
-        else:
-            val_ast = "0"
+        # Lettura a vista da Colonna H (Goal) e Colonna I (Assist)
+        val_gol = str(player[col_gol]).strip() if col_gol and pd.notna(player[col_gol]) else "0"
+        val_ast = str(player[col_assist]).strip() if col_assist and pd.notna(player[col_assist]) else "0"
 
         p_subiti = parse_num(player[col_subiti]) if col_subiti else 0
         p_clean = parse_num(player[col_clean]) if col_clean else 0
@@ -253,21 +247,22 @@ if ricerca_nome and not df_filtered.empty:
         with st.container():
             st.markdown(f"### **{p_nome}** ({p_ruolo} - {p_squadra})")
 
-            # LOGICA RICHIESTA: Se NON è un portiere ("P"), mostra direttamente i dati di Goal e Assist
-            if p_ruolo != "P":
-                c1, c2, c3, c4, c5 = st.columns(5)
-                c1.metric("Prezzo Consigliato", f"{p_cons} cr")
-                c2.metric("Prezzo Max", f"{p_max} cr")
-                c3.metric("Presenze", p_pres)
-                c4.metric("Goal (2025/2026) ⚽", val_gol)
-                c5.metric("Assist (2025/2026) 🅰️", val_ast)
-            else:
+            # REGOLA: Se la riga nel CSV è <= 62 OPPURE il ruolo è 'P', lo tratta come Portiere.
+            # Tutti i restanti (dalla riga 63 in poi) mostrano GOAL e ASSIST.
+            if row_num <= 62 or p_ruolo == "P":
                 c1, c2, c3, c4, c5 = st.columns(5)
                 c1.metric("Prezzo Consigliato", f"{p_cons} cr")
                 c2.metric("Prezzo Max", f"{p_max} cr")
                 c3.metric("Presenze", p_pres)
                 c4.metric("Goal Subiti 🥊", p_subiti)
                 c5.metric("Clean Sheet 🧤", p_clean)
+            else:
+                c1, c2, c3, c4, c5 = st.columns(5)
+                c1.metric("Prezzo Consigliato", f"{p_cons} cr")
+                c2.metric("Prezzo Max", f"{p_max} cr")
+                c3.metric("Presenze", p_pres)
+                c4.metric("Goal (2025/2026) ⚽", val_gol)
+                c5.metric("Assist (2025/2026) 🅰️", val_ast)
 
             # Gestione Badges
             if col_badge and pd.notna(player[col_badge]):
@@ -278,14 +273,15 @@ if ricerca_nome and not df_filtered.empty:
                         badge_html = " ".join([f'<span class="badge-tag">🎖️ {b}</span>' for b in badge_list])
                         st.markdown(f"**Badges:** {badge_html}", unsafe_allow_html=True)
 
-            # Diagnostica
-            with st.expander("🛠️ Diagnostica Colonne CSV"):
+            # Diagnostica per la verifica dei dati estratti
+            with st.expander("🛠️ Diagnostica Dati Riga CSV"):
                 st.write({
-                    "Colonna Goal trovata": col_gol,
-                    "Colonna Assist trovata": col_assist,
-                    "Valore a vista Goal": val_gol,
-                    "Valore a vista Assist": val_ast,
-                    "Tutte le Colonne": list(df.columns)
+                    "Numero Riga CSV": row_num,
+                    "Colonna A (Ruolo)": p_ruolo,
+                    "Colonna H (Goal)": val_gol,
+                    "Colonna I (Assist)": val_ast,
+                    "Nome Colonna Goal Identificato": col_gol,
+                    "Nome Colonna Assist Identificato": col_assist,
                 })
 
             st.markdown("---")
