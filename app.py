@@ -77,22 +77,23 @@ st.markdown("---")
 
 
 # ==========================================
-# 3. FUNZIONE CARICAMENTO DATI (CON CACHE)
+# 3. FUNZIONE CARICAMENTO DATI (CSV CON CACHE)
 # ==========================================
 @st.cache_data
 def load_data():
-    file_name = "tutti_2027.xlsx"
+    file_name = "tutti_2027.csv"
 
     if not os.path.exists(file_name):
         st.error(
-            f"❌ Impossibile trovare il file '{file_name}'. Verifica che sia presente nella directory principale."
+            f"❌ Impossibile trovare il file '{file_name}'. Verifica che sia presente nella directory principale del progetto."
         )
         return pd.DataFrame()
 
     try:
-        df = pd.read_excel(file_name, sheet_name="tutti_2027")
+        # Lettura file CSV
+        df = pd.read_csv(file_name)
 
-        # Pulizia intestazioni
+        # Pulizia intestazioni colonne (rimozione spazi extra)
         df.columns = df.columns.str.strip()
 
         # Conversione numerica sicura
@@ -119,7 +120,7 @@ def load_data():
 
     except Exception as e:
         st.error(
-            f"❌ Si è verificato un errore durante la lettura del file Excel: {e}"
+            f"❌ Si è verificato un errore durante la lettura del file CSV: {e}"
         )
         return pd.DataFrame()
 
@@ -128,7 +129,7 @@ df = load_data()
 
 if df.empty:
     st.warning(
-        "Caricamento dati non riuscito. Controlla il file Excel e riprova."
+        "Caricamento dati non riuscito. Controlla il file CSV e riprova."
     )
     st.stop()
 
@@ -241,11 +242,11 @@ with col4:
 st.markdown("---")
 
 # ==========================================
-# 7. TABELLA DINAMICA CON COLORI & BADGE
+# 7. TABELLA DINAMICA CON FORMATTAZIONE
 # ==========================================
 st.subheader("📋 Tabella Calciatori & Consigli Asta")
 
-# Selezione colonne per ruolo
+# Selezione colonne in base al ruolo scelto
 if ruolo_selezionato == "P":
     cols_to_display = [
         col
@@ -285,7 +286,7 @@ else:
         if col in df_filtered.columns
     ]
 
-# Configurazione formattazione avanzata colonne
+# Configurazione formattazione colonne
 column_configuration = {
     "RUOLO": st.column_config.TextColumn("Ruolo"),
     "Prezzo consigliato": st.column_config.NumberColumn(
