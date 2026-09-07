@@ -77,7 +77,7 @@ st.markdown("---")
 
 
 # ==========================================
-# 3. FUNZIONE CARICAMENTO DATI (CON LETTURA SICURA VALORI)
+# 3. FUNZIONE CARICAMENTO DATI
 # ==========================================
 @st.cache_data
 def load_data():
@@ -102,16 +102,8 @@ def load_data():
         # Pulizia nomi colonne
         df.columns = df.columns.str.strip()
 
-        # Funzione helper per identificare le colonne senza rigidezza
-        def get_col_name(candidates):
-            for cand in candidates:
-                for col in df.columns:
-                    if cand.lower() in col.lower():
-                        return col
-            return None
-
-        # Rilevamento colonne
-        col_ruolo = get_col_name(["ruolo"])
+        # Normalizzazione Ruolo
+        col_ruolo = next((c for c in df.columns if "ruolo" in c.lower()), None)
         if col_ruolo:
             df["RUOLO"] = df[col_ruolo].astype(str).str.strip().str.upper()
 
@@ -121,7 +113,6 @@ def load_data():
                 k in col.lower()
                 for k in ["prezzo", "presenz", "goal", "gol", "assist", "clean"]
             ):
-                # Estrae numeri e decimali mantenendo la precisione
                 df[col] = pd.to_numeric(
                     df[col]
                     .astype(str)
@@ -147,7 +138,8 @@ if df.empty:
     )
     st.stop()
 
-# Helper generale per la ricerca delle colonne
+
+# Helper per la ricerca flessibile delle colonne
 def find_col(keywords):
     for kw in keywords:
         for c in df.columns:
@@ -247,25 +239,41 @@ if verdetto_selezionato != "TUTTI" and col_verdetto:
     ]
 
 # ==========================================
-# 6. METRICHE GENERALI E KPI
+# 6. METRICHE UTILI ASTA (KPI PULITI)
 # ==========================================
-st.subheader("📊 Panoramica Rosa & Asta")
+st.subheader("📊 Panoramica Selezione")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("Calciatori Filtrati", len(df_filtered))
 
 with col2:
-    p_cons = df_filtered[col_p_cons].sum() if col_p_cons else 0
-    st.metric("Tot. Prezzi Consigliati", f"{int(p_cons)} cr")
+    if col_slot:
+        top_players = len(
+            df_filtered[df_filtered[col_slot].astype(str).str.contains("1")]
+        )
+        st.metric("Giocatori 1° Slot", top_players)
+    else:
+        st.metric("Giocatori 1° Slot", "-")
 
 with col3:
-    p_max = df_filtered[col_p_max].sum() if col_p_max else 0
-    st.metric("Tot. Prezzi Massimi", f"{int(p_max)} cr")
+    if col_p_cons and len(df_filtered) > 0:
+        media_p = df_filtered[col_p_cons].mean()
+        st.metric("Prezzo Consigliato Medio", f"{int(media_p)} cr")
+    else:
+        st.metric("Prezzo Consigliato Medio", "0 cr")
 
 with col4:
-    tot_gol = df_filtered[col_gol].sum() if col_gol else 0
-    st.metric("Totale Gol Proiettati", int(tot_gol))
+    if col_badge:
+        badge_count = len(
+            df_filtered[
+                df_filtered[col_badge].notna()
+                & (df_filtered[col_badge].astype(str).str.strip() != "")
+            ]
+        )
+        st.metric("Badge Speciali", badge_count)
+    else:
+        st.metric("Badge Speciali", "-")
 
 st.markdown("---")
 
@@ -274,27 +282,31 @@ st.markdown("---")
 # ==========================================
 st.subheader("📋 Tabella Calciatori & Consigli Asta")
 
-# Costruzione intelligente delle colonne in base al ruolo selezionato
+# Definiamo le colonne base e prezzi
 cols_base = [col_ruolo, col_nome, col_squadra, col_slot]
 cols_prezzi = [col_p_cons, col_p_max, col_pres]
 
+# Logica colonne per ruolo
 if ruolo_selezionato == "P":
-    # Esclusivo per i Portieri: solo statistiche difensive
+    # Soltanto per la vista esclusiva Portieri
     cols_stats = [col_subiti, col_clean]
+elif ruolo_selezionato in ["D", "C", "A"]:
+    # Soltanto per ruoli di movimento
+    cols_stats = [col_gol, col_assist]
 else:
-    # Per Giocatori di movimento o Vista generale: solo Goal e Assist
+    # Per "TUTTI": mostriamo Gol e Assist (le metriche portiere restano nascoste per non creare confusione)
     cols_stats = [col_gol, col_assist]
 
 cols_extra = [col_badge, col_verdetto]
 
-# Assemblaggio e rimozione dei None
+# Assemblaggio e pulizia colonne
 cols_to_display = [
     c
     for c in (cols_base + cols_prezzi + cols_stats + cols_extra)
     if c is not None and c in df_filtered.columns
 ]
 
-# Configurazione formattazione elegante delle colonne
+# Formattazione e intestazioni tabella
 column_configuration = {}
 if col_ruolo in cols_to_display:
     column_configuration[col_ruolo] = st.column_config.TextColumn("Ruolo")
@@ -327,7 +339,7 @@ if col_clean in cols_to_display:
         "Clean Sheet 🧤", format="%d"
     )
 if col_badge in cols_to_display:
-    column_configuration[col_badge] = st.column_config.TextColumn("Badge")
+    column_configuration[col_badge] = st.column_config.TextColumn("Badge 🎖️")
 
 st.dataframe(
     df_filtered[cols_to_display],
